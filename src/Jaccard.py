@@ -34,7 +34,7 @@ class Simple_Jaccard:
 
         return distances
 
-    def convert_jaccard_distances_to_distance_matrix(self, pairwise_distances):
+    def convert_distances_to_distance_matrix(self, pairwise_distances):
         '''
         Converts the pairwise distances iterator from NetworkX to a distance matrix
 
@@ -74,16 +74,16 @@ class Simple_Jaccard:
             Log_processing.show_dfg_of_log(self.log)
 
         # generate a distance matrix using the directly follows graph of the events
-        jaccard_distances = self.get_jaccard_distance_of_dfg()
-        jaccard_activities, distance_matrix = self.convert_jaccard_distances_to_distance_matrix(jaccard_distances)
+        distances = self.get_jaccard_distance_of_dfg()
+        activities, distance_matrix = self.convert_distances_to_distance_matrix(distances)
         
         # perform hierarchical clustering and generate the resulting dendrogram
-        jaccard_linkage = Clustering.create_linkage(distance_matrix)
-        result_dendrogram = Clustering.create_dendrogram(jaccard_activities, jaccard_linkage)
+        linkage = Clustering.create_linkage(distance_matrix)
+        result_dendrogram = Clustering.create_dendrogram(activities, linkage)
 
         # generate the hierarchies dictionary
-        clusterings = Clustering.create_clusterings_for_every_level(jaccard_activities, distance_matrix, jaccard_linkage)
-        hierarchies = Clustering.create_hierarchy_for_activities(jaccard_activities, clusterings)
+        clusterings = Clustering.create_clusterings_for_every_level(activities, distance_matrix, linkage)
+        hierarchies = Clustering.create_hierarchy_for_activities(activities, clusterings)
 
         # print the hierarchies
         if verbose:
@@ -166,16 +166,16 @@ class Weighted_Jaccard:
         connections_df = Log_processing.get_weighted_df(connections_df)
 
         # generate the weighted jaccard distance matrix
-        jaccard_distances = self.get_weighted_jaccard_distance_matrix(connections_df)
-        jaccard_activities = jaccard_distances.columns
+        distances = self.get_weighted_jaccard_distance_matrix(connections_df)
+        activities = distances.columns
         
         # perform hierarchical clustering and generate the resulting dendrogram
-        jaccard_linkage = Clustering.create_linkage(jaccard_distances.to_numpy())
-        result_dendrogram = Clustering.create_dendrogram(jaccard_activities, jaccard_linkage)
+        linkage = Clustering.create_linkage(distances.to_numpy())
+        result_dendrogram = Clustering.create_dendrogram(activities, linkage)
         
         # generate the hierarchies dictionary
-        clusterings = Clustering.create_clusterings_for_every_level(jaccard_activities, jaccard_distances, jaccard_linkage)
-        hierarchies = Clustering.create_hierarchy_for_activities(jaccard_distances, clusterings)
+        clusterings = Clustering.create_clusterings_for_every_level(activities, distances, linkage)
+        hierarchies = Clustering.create_hierarchy_for_activities(distances, clusterings)
 
         # print the hierarchies
         if verbose:
