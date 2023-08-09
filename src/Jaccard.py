@@ -2,6 +2,7 @@ import pandas as pd
 import pm4py
 import networkx as nx
 import numpy as np
+
 import Log_processing, Clustering
 
 class Simple_Jaccard:
@@ -77,9 +78,13 @@ class Simple_Jaccard:
         distances = self.get_jaccard_distance_of_dfg()
         activities, distance_matrix = self.convert_distances_to_distance_matrix(distances)
         
+        # print the distances between events
+        if verbose:
+            display(distance_matrix)
+
         # perform hierarchical clustering and generate the resulting dendrogram
         linkage = Clustering.create_linkage(distance_matrix)
-        result_dendrogram = Clustering.create_dendrogram(activities, linkage)
+        dendrogram = Clustering.create_dendrogram(activities, linkage)
 
         # generate the hierarchies dictionary
         clusterings = Clustering.create_clusterings_for_every_level(activities, distance_matrix, linkage)
@@ -166,16 +171,20 @@ class Weighted_Jaccard:
         connections_df = Log_processing.get_weighted_df(connections_df)
 
         # generate the weighted jaccard distance matrix
-        distances = self.get_weighted_jaccard_distance_matrix(connections_df)
-        activities = distances.columns
+        distance_matrix = self.get_weighted_jaccard_distance_matrix(connections_df)
+        activities = distance_matrix.columns
         
+        # print the distances between events
+        if verbose:
+            display(distance_matrix)
+
         # perform hierarchical clustering and generate the resulting dendrogram
-        linkage = Clustering.create_linkage(distances.to_numpy())
-        result_dendrogram = Clustering.create_dendrogram(activities, linkage)
+        linkage = Clustering.create_linkage(distance_matrix.to_numpy())
+        dendrogram = Clustering.create_dendrogram(activities, linkage)
         
         # generate the hierarchies dictionary
-        clusterings = Clustering.create_clusterings_for_every_level(activities, distances, linkage)
-        hierarchies = Clustering.create_hierarchy_for_activities(distances, clusterings)
+        clusterings = Clustering.create_clusterings_for_every_level(activities, distance_matrix, linkage)
+        hierarchies = Clustering.create_hierarchy_for_activities(activities, clusterings)
 
         # print the hierarchies
         if verbose:
