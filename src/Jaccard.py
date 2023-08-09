@@ -63,7 +63,7 @@ class Simple_Jaccard:
         # return only the values of the matrix, not the names of the activities
         return activities, distance_matrix
 
-    def perform_clustering_using_simple_jaccard(self, verbose=False):
+    def perform_clustering(self, verbose=False):
         '''
         Performs all necessary steps to perform hierarchical clustering using simple jaccard similarity
         and then generating a hierarchy used for abstracting the event log
@@ -151,7 +151,7 @@ class Weighted_Jaccard:
         jaccard_table = pd.DataFrame(jaccard_table)
         return jaccard_table
 
-    def perform_clustering_using_weighted_jaccard(self, verbose=False):
+    def perform_clustering(self, verbose=False):
         '''
         Performs all necessary steps to perform hierarchical clustering using weighted jaccard similarity
         and then generating a hierarchy used for abstracting the event log
