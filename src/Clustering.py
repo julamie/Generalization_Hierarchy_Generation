@@ -13,7 +13,7 @@ def create_linkage(distances):
     # perform hierarchical clustering
     return linkage(condensed_matrix, 'average')
 
-def create_dendrogram(activities, linkage_matrix):
+def create_dendrogram(activities, linkage_matrix, ax=None):
     '''
     Creates the dendrogram of the hierarchical clustering operation using scipy
     Displays the dendrogram to the terminal
@@ -22,7 +22,8 @@ def create_dendrogram(activities, linkage_matrix):
     # create dendrogram out of data
     dn = dendrogram(linkage_matrix,
                     orientation="right",
-                    labels=activities)
+                    labels=activities,
+                    ax=ax)
 
     return dn
 
