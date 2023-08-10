@@ -6,15 +6,9 @@ import numpy as np
 import Log_processing, Clustering
 
 class Simple_Jaccard:
-    def __init__(self, log_path, filtered=False, num_top_k=0):
-        if filtered:
-            if num_top_k == 0:
-                print("num_top_k = 0 returns an empty event log")
-            self.log = Log_processing.get_filtered_log(log_path, num_top_k)
-        else:
-            self.log = Log_processing.get_log(log_path)
+    def __init__(self, log):
+        self.log = log
         
-
     def get_jaccard_distance_of_dfg(self):
         '''
         Computes the jaccard measure of two nodes using the DFG
@@ -64,7 +58,7 @@ class Simple_Jaccard:
         # return only the values of the matrix, not the names of the activities
         return activities, distance_matrix
 
-    def perform_clustering(self, verbose=False):
+    def perform_clustering(self, verbose=False, ax=None):
         '''
         Performs all necessary steps to perform hierarchical clustering using simple jaccard similarity
         and then generating a hierarchy used for abstracting the event log
@@ -84,7 +78,7 @@ class Simple_Jaccard:
 
         # perform hierarchical clustering and generate the resulting dendrogram
         linkage = Clustering.create_linkage(distance_matrix)
-        dendrogram = Clustering.create_dendrogram(activities, linkage)
+        dendrogram = Clustering.create_dendrogram(activities, linkage, ax=ax)
 
         # generate the hierarchies dictionary
         clusterings = Clustering.create_clusterings_for_every_level(activities, distance_matrix, linkage)
@@ -94,9 +88,11 @@ class Simple_Jaccard:
         if verbose:
             Clustering.print_hierarchy_for_activities(hierarchies)
 
+        return dendrogram
+
 class Weighted_Jaccard:
-    def __init__(self, log_path):
-        self.log = Log_processing.get_log(log_path)
+    def __init__(self, log):
+        self.log = log
 
     def calculate_weighted_jaccard_similarity(self, G, node1, node2):
         '''
@@ -156,7 +152,7 @@ class Weighted_Jaccard:
         jaccard_table = pd.DataFrame(jaccard_table)
         return jaccard_table
 
-    def perform_clustering(self, verbose=False):
+    def perform_clustering(self, verbose=False, ax=None):
         '''
         Performs all necessary steps to perform hierarchical clustering using weighted jaccard similarity
         and then generating a hierarchy used for abstracting the event log
@@ -180,7 +176,7 @@ class Weighted_Jaccard:
 
         # perform hierarchical clustering and generate the resulting dendrogram
         linkage = Clustering.create_linkage(distance_matrix.to_numpy())
-        dendrogram = Clustering.create_dendrogram(activities, linkage)
+        dendrogram = Clustering.create_dendrogram(activities, linkage, ax=ax)
         
         # generate the hierarchies dictionary
         clusterings = Clustering.create_clusterings_for_every_level(activities, distance_matrix, linkage)

@@ -7,13 +7,8 @@ import Log_processing, Clustering
 import SimRank_external # imported from https://github.com/ysong1231/SimRank/tree/main
 
 class Simple_Simrank:
-    def __init__(self, log_path, filtered=False, num_top_k=0):
-        if filtered:
-            if num_top_k == 0:
-                print("num_top_k = 0 returns an empty event log")
-            self.log = Log_processing.get_filtered_log(log_path, num_top_k)
-        else:
-            self.log = Log_processing.get_log(log_path)
+    def __init__(self, log):
+        self.log = log
 
     def get_simrank_distance_of_dfg(self):
         '''
@@ -53,7 +48,7 @@ class Simple_Simrank:
         # return only the values of the matrix, not the names of the activities
         return activities, distance_matrix
 
-    def perform_clustering(self, verbose=False):
+    def perform_clustering(self, verbose=False, ax=None):
         '''
         Performs all necessary steps to perform hierarchical clustering using simple simrank similarity
         and then generates a hierarchy used for abstracting the event log
@@ -73,7 +68,7 @@ class Simple_Simrank:
 
         # perform hierarchical clustering and generate the resulting dendrogram
         linkage = Clustering.create_linkage(distance_matrix)
-        dendrogram = Clustering.create_dendrogram(activities, linkage)
+        dendrogram = Clustering.create_dendrogram(activities, linkage, ax)
 
         # generate the hierarchies dictionary
         clusterings = Clustering.create_clusterings_for_every_level(activities, distance_matrix, linkage)
@@ -84,10 +79,10 @@ class Simple_Simrank:
             Clustering.print_hierarchy_for_activities(hierarchies)
 
 class Weighted_Simrank:
-    def __init__(self, log_path):
-        self.log = Log_processing.get_log(log_path)
+    def __init__(self, log):
+        self.log = log
 
-    def perform_clustering(self, verbose=False):
+    def perform_clustering(self, verbose=False, ax=None):
         '''
         Performs all necessary steps to perform hierarchical clustering using weighted simrank similarity
         and then generates a hierarchy used for abstracting the event log
@@ -127,7 +122,7 @@ class Weighted_Simrank:
 
         # perform hierarchical clustering and generate the resulting dendrogram
         linkage = Clustering.create_linkage(distance_matrix)
-        dendrogram = Clustering.create_dendrogram(activities, linkage)
+        dendrogram = Clustering.create_dendrogram(activities, linkage, ax)
 
         # generate the hierarchies dictionary
         clusterings = Clustering.create_clusterings_for_every_level(activities, distance_matrix, linkage)
