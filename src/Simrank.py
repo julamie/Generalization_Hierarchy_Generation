@@ -79,7 +79,7 @@ class Simple_Simrank:
         # return only the values of the matrix, not the names of the activities
         return activities, distance_matrix
 
-    def perform_clustering(self, verbose=False, ax=None):
+    def perform_clustering(self, verbose=False, ax=None, no_plot=False):
         '''
         Performs all necessary steps to perform hierarchical clustering using simple simrank similarity
         and then generates a hierarchy used for abstracting the event log
@@ -99,7 +99,7 @@ class Simple_Simrank:
 
         # perform hierarchical clustering and generate the resulting dendrogram
         self.linkage = Clustering.create_linkage(self.distance_matrix)
-        self.dendrogram = Clustering.create_dendrogram(self.activities, self.linkage, ax)
+        self.dendrogram = Clustering.create_dendrogram(self.activities, self.linkage, ax=ax, no_plot=no_plot)
 
         # generate the hierarchies dictionary
         self.clusterings = Clustering.create_clusterings_for_every_level(self.activities, self.distance_matrix, self.linkage)
@@ -144,7 +144,7 @@ class Weighted_Simrank:
     def get_hierarchies(self):
         return self.hierarchies
 
-    def perform_clustering(self, verbose=False, ax=None):
+    def perform_clustering(self, verbose=False, ax=None, no_plot=False):
         '''
         Performs all necessary steps to perform hierarchical clustering using weighted simrank similarity
         and then generates a hierarchy used for abstracting the event log
@@ -170,7 +170,7 @@ class Weighted_Simrank:
 
         # print the distances between events
         if verbose:
-            display(self.distance_matrix)
+            print(self.distance_matrix)
 
         # apply min-max normalization to the entire array
         # otherwise the dendrogram looks unreadable
@@ -183,8 +183,9 @@ class Weighted_Simrank:
         self.distance_matrix = normalized_data
 
         # perform hierarchical clustering and generate the resulting dendrogram
+        self.distance_matrix = np.round(self.distance_matrix, decimals=8)
         self.linkage = Clustering.create_linkage(self.distance_matrix)
-        self.dendrogram = Clustering.create_dendrogram(self.activities, self.linkage, ax)
+        self.dendrogram = Clustering.create_dendrogram(self.activities, self.linkage, ax=ax, no_plot=no_plot)
 
         # generate the hierarchies dictionary
         self.clusterings = Clustering.create_clusterings_for_every_level(self.activities, self.distance_matrix, self.linkage)
