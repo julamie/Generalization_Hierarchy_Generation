@@ -95,7 +95,7 @@ class Simple_Simrank:
         
         # print the distances between events
         if verbose:
-            display(self.distance_matrix)
+            print(self.distance_matrix)
 
         # perform hierarchical clustering and generate the resulting dendrogram
         self.linkage = Clustering.create_linkage(self.distance_matrix)
