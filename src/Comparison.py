@@ -2,6 +2,8 @@ import Jaccard, Simrank
 from scipy.cluster.hierarchy import fcluster
 from sklearn.metrics import rand_score, mutual_info_score
 import matplotlib.pyplot as plt
+import tanglegram as tg
+import pandas as pd
 
 def show_dendrograms_for_event_log(log, figure_title, output_file_name):
     '''
@@ -31,6 +33,10 @@ def show_dendrograms_for_event_log(log, figure_title, output_file_name):
     fig.savefig("../out/" + output_file_name)
 
 def compare_dendrogram_using_rand_score(metric1, metric2):
+    '''
+    Calculates the rand score between two clusterings for every level. Plots the result
+    '''
+
     # perform clustering using the different distance metrics given
     metric1.perform_clustering(no_plot=True)
     metric2.perform_clustering(no_plot=True)
@@ -68,6 +74,10 @@ def compare_dendrogram_using_rand_score(metric1, metric2):
     return rand_scores
 
 def compare_dendrogram_using_mutual_info_score(metric1, metric2):
+    '''
+    Calculates the mutual information score between two clusterings for every level. Plots the result
+    '''
+
     # perform clustering using the different distance metrics given
     metric1.perform_clustering(no_plot=True)
     metric2.perform_clustering(no_plot=True)
@@ -103,3 +113,14 @@ def compare_dendrogram_using_mutual_info_score(metric1, metric2):
     fig.show()
 
     return mutual_info_scores
+
+def show_tanglegram(metric1, metric2):
+    metric1.perform_clustering(no_plot=True)
+    metric2.perform_clustering(no_plot=True)
+
+    jacc_df = pd.DataFrame(metric1.get_distance_matrix(), columns = metric1.get_activities(), index = metric1.get_activities())
+    simrank_df = pd.DataFrame(metric2.get_distance_matrix(), columns = metric2.get_activities(), index = metric2.get_activities())
+
+    fig = tg.plot(jacc_df, simrank_df, sort=True)
+    fig.set_size_inches(32, 10)
+    plt.show()
