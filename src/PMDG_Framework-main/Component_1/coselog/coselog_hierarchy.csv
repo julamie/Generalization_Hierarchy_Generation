@@ -1,0 +1,17 @@
+Confirmation of receipt - complete;confirmation of receipt - complete;confirm receipt or determine advice - complete;*
+T02 Check confirmation of receipt - complete;confirmation of receipt - complete;confirm receipt or determine advice - complete;*
+T03 Adjust confirmation of receipt - complete;confirmation of receipt - complete;confirm receipt or determine advice - complete;*
+T04 Determine confirmation of receipt - complete;confirmation of receipt - complete;confirm receipt or determine advice - complete;*
+T05 Print and send confirmation of receipt - complete;confirmation of receipt - complete;confirm receipt or determine advice - complete;*
+T06 Determine necessity of stop advice - complete;Determine advice - complete;confirm receipt or determine advice - complete;*
+T10 Determine necessity to stop indication - complete;Determine advice - complete;confirm receipt or determine advice - complete;*
+T16 Report reasons to hold request - complete;Determine advice - complete;confirm receipt or determine advice - complete;*
+T17 Check report Y to stop indication - complete;stop indication - complete;document X request or stop indication - complete;*
+T19 Determine report Y to stop indication - complete;stop indication - complete;document X request or stop indication - complete;*
+T20 Print report Y to stop indication - complete;stop indication - complete;document X request or stop indication - complete;*
+T11 Create document X request unlicensed - complete;document X request unlicensed - complete;document X request or stop indication - complete;*
+T12 Check document X request unlicensed - complete;document X request unlicensed - complete;document X request or stop indication - complete;*
+T14 Determine document X request unlicensed - complete;document X request unlicensed - complete;document X request or stop indication - complete;*
+T15 Print document X request unlicensed - complete;document X request unlicensed - complete;document X request or stop indication - complete;*
+T07-1 Draft intern advice aspect 1 - complete;Determine advice - complete;confirm receipt or determine advice - complete;*
+-;-;-;-

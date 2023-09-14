@@ -1,0 +1,1 @@
+rm coselog.csv coselog_mafft.csv coselog_for_arx_mafft.csv coselog_for_arx_naive.csv coselog_anon_k_5.csv coselog_anonymized_log_k_5.xes

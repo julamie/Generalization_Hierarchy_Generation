@@ -1,0 +1,12 @@
+Create Fine;Fine;Payment or Collection
+Send Fine;Fine;Payment or Collection
+Insert Fine Notification;Fine;Payment or Collection
+Add penalty;Payment;Appeal
+Payment;Payment;Appeal
+Send for Credit Collection;Payment;Appeal
+Insert Date Appeal to Prefecture;Appeal to Prefecture;Appeal
+Send Appeal to Prefecture;Appeal to Prefecture;Appeal
+Receive Result Appeal from Prefecture;Appeal to Prefecture;Appeal
+Notify Result Appeal to Offender;Appeal to Court;Appeal
+Appeal to Judge;Appeal to Court;Appeal
+-;-;-
