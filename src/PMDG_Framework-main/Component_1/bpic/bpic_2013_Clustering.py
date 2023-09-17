@@ -47,7 +47,7 @@ dict_convert = {'A': 'Accepted + In Progress',
                 'M': 'Unmatched + Unmatched',
                 '-': '-'}
 
-with open('bpic_2013_maffa.csv', newline='') as f:
+with open('bpic_2013_mafft.csv', newline='') as f:
     reader = csv.reader(f)
     data = list(reader)
 
