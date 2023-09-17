@@ -1,1 +1,1 @@
-rm bpic_2013.csv bpic_2013_mafft.csv bpic_2013_for_arx_naive.csv
+rm bpic_2013.csv bpic_2013_mafft.csv bpic_2013_for_arx_naive.csv bpic_anon_k_5.csv bpic_anomymized_log_k_5.xes
