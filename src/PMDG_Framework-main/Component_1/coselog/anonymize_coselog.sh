@@ -17,8 +17,8 @@ echo "Naively vectorized"
 echo "Anonymize using ARX"
 cd ../../Component_2/
 javac -cp .:arx-3.9.1-gtk-64.jar ARXAnonymizeAttributes.java
-java -cp .:arx-3.9.1-gtk-64.jar ARXAnonymizeAttributes "../Component_1/coselog/coselog_for_arx_mafft.csv" "../Component_1/coselog/coselog_hierarchy.csv" "../Component_1/coselog/coselog_anon_k_5.csv" 5  # returns coselog_anon_k_{k}.csv
+java -cp .:arx-3.9.1-gtk-64.jar ARXAnonymizeAttributes "../Component_1/coselog/coselog_for_arx_mafft.csv" "../Component_1/coselog/coselog_hierarchy.csv" "../Component_1/coselog/coselog_anon_k_5.csv" 5 # returns coselog_anon_k_{k}.csv
 
-cd ../Component_1
+cd ../Component_1/coselog/
 echo "Create the anonymized event log"
-python rewrite_traces_in_log.py     # returns coselog_anonymized_log_k_{k}.xes
+python rewrite_traces_in_coselog.py     # returns coselog_anonymized_log_k_{k}.xes
