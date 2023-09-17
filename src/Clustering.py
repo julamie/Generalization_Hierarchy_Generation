@@ -88,7 +88,60 @@ def create_hierarchy_levels(activities, cluster_data):
             for activity in curr_cluster:
                 hierarchies[activity].append(curr_cluster)
 
-    return hierarchies
+def create_hierarchy_with_dummies(activities, distance_matrix, linkage_matrix):
+    '''
+    Creates an abstraction hierarchy for every activity. Because every activity can have a different number
+    of abstractions and ARX requires the same number for every activity dummies will be inserted at the
+    second spot of every cluster data if necessary.
+
+    It will be inserted on the second spot to keep the original activity name at the beginning
+    '''
+
+    clusterings = create_clusterings_for_every_level(activities, distance_matrix, linkage_matrix)
+    hierarchy = create_hierarchy_for_activities(activities, clusterings)
+    
+    # find biggest number of abstractions in the dendrogram
+    max_num_abstractions = max([len(cluster_list) for cluster_list in hierarchy.values()])
+
+    # find all activities which have less abstractions
+    for activity in hierarchy:
+        cluster_data = hierarchy[activity]
+        num_abstractions = len(cluster_data)
+        
+        # add dummies at the beginning to even out the number of abstractions in each level
+        if num_abstractions < max_num_abstractions:
+            for _ in range(max_num_abstractions - num_abstractions):
+                cluster_data.insert(1, {str(activity) + "_dummy"})
+   
+    return hierarchy
+
+def generate_hierarchy_file_with_dummies(activities, distance_matrix, linkage_matrix, file_name):
+    '''
+    Generates the file for the hierarchy of activities in out/file_name.
+    Every row is the hierarchy for one activity. The first cluster is unchanged,
+    the following clusters are surrounded by curly brackets, the last cluster is
+    the *, which includes all activities.
+    This method is different to generate_hierarchy_file in that it generates the hierarchies using dummies
+    '''
+
+    hierarchies = create_hierarchy_with_dummies(activities, distance_matrix, linkage_matrix)
+
+    # write the hierarchy output file
+    with open(f"../out/{file_name}", 'w') as f:
+        for activity in hierarchies:
+            first_element = True
+            for level in hierarchies[activity]:
+                # write the fast element without curly brackets
+                if first_element:
+                    f.write(str(list(level)[0]) + ";")
+                    first_element = False
+                # if all activities are in the cluster, shorten output to *
+                elif len(level) == len(activities):
+                    f.write("*\n")
+                # surround the content of the cluster by curly brackets
+                else:
+                    cluster_to_string = "{" + ', '.join(level) + "};"
+                    f.write(cluster_to_string)
 
 def generate_hierarchy_file(linkage, activities, num_levels, file_name):
     '''
