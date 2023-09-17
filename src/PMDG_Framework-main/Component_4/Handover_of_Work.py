@@ -9,10 +9,10 @@ from pm4py.visualization.sna import visualizer as sna_visualizer
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.objects.conversion.log import converter as log_converter
 
-import Convert_Log
+#import Convert_Log
 
 # Event Log Variants
-original_log = xes_importer.apply(str(pathlib.Path().resolve()) + "\\Event Logs\\bpi_challenge_2013_incidents.xes")
+original_log = xes_importer.apply("logs/BPI_Challenge_2013_incidents.xes")
 df_log = pm4py.convert_to_dataframe(original_log)
 
 df_log['concept:name'] = df_log['concept:name'] + ' - ' + df_log['lifecycle:transition']
