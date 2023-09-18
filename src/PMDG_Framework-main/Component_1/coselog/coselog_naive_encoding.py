@@ -47,7 +47,7 @@ for i in filter_variants.unique().tolist():
         li.append('-')
     variant_pairs[str(li)] = filter_variants.index[filter_variants == i].tolist()
 
-with open("coselog_for_arx_naive.csv", "w") as f:
+with open("out/coselog_for_arx_naive.csv", "w") as f:
     f.write("variant,row_1,row_2,row_3,row_4,row_5,row_6,row_7,row_8,row_9,row_10\n")
     for key, value in variant_pairs.items():
         for trace in value:

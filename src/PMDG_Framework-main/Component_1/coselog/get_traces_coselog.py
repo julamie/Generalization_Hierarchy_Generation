@@ -54,7 +54,7 @@ for j in variants:
 
 counter = 0
 
-with open("coselog.csv", "w") as f:
+with open("out/coselog.csv", "w") as f:
     for row in abstracted_variants:
         f.write("> " + str(counter) + '\n')
         f.write("%s\n" % ','.join(str(col) for col in row))

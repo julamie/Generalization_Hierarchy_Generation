@@ -45,7 +45,7 @@ dict_convert = {'A': 'Confirmation of receipt - complete',
                 'P': 'T07-1 Draft intern advice aspect 1 - complete',
                 '-': '-'}
 
-with open('coselog_mafft.csv', newline='') as f:
+with open('out/coselog_mafft.csv', newline='') as f:
     reader = csv.reader(f)
     data = list(reader)
 
@@ -74,7 +74,7 @@ for i in data[1::2]: # changed from just data
         writer.append(trace_instance)
 
 
-with open("coselog_for_arx_mafft.csv", "w") as f:
+with open("out/coselog_for_arx_mafft.csv", "w") as f:
     f.write("variant,row_1,row_2,row_3,row_4,row_5,row_6,row_7,row_8,row_9,row_10,row_11,row_12,row_13,row_14,row_15,"
             "row_16,row_17,row_18,row_19\n") # last element was row_22
     for trace in writer:
