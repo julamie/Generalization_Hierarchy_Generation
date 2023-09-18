@@ -46,7 +46,7 @@ class RewriteLog:
                     continue
                 else:
                     trace_a.append(i[j])
-            # if values were "-" replace these with trace_a
+            # if values were "-", replace these with trace_a
             if len(trace['concept:name']) != len(trace_a):
                 pass
                 #print(trace['concept:name'])
@@ -69,22 +69,27 @@ class RewriteLog:
         # convert all traces in the list frames to an event log
         new_df = pd.concat(frames)
         event_log = pm4py.convert_to_event_log(new_df)
-        pm4py.write_xes(event_log, "coselog_anonymized_log_k_5.xes")
+        pm4py.write_xes(event_log, "out/coselog_anonymized_log_k_5.xes")
         
         # set of all unique attribute lengths
-        '''
         unique_attribute_length = set(attribute_length)
         for size in unique_attribute_length:
-            with open("output_for_arx_2_" + str(size) + ".csv", "w") as f:
+            with open("out/coselog_for_arx_resource_attribute_" + str(size) + ".csv", "w") as f:
+                # write top line for csv file
+                f.write("variant")
+                for i in range(1, size):
+                    f.write(",row_" + str(i))
+                f.write("\n")
+
+                # write traces of length size to file
                 for trace in attribute_writer:
                     if len(trace) == size:
-                        f.write("%s\n" % trace)
-        '''
+                        f.write("%s\n" % ', '.join(trace))
         
         # return event_log
 
 log = xes_importer.apply(str(pathlib.Path().resolve()) + "/coselog.xes")
-privacy_log = pd.read_csv(str(pathlib.Path().resolve()) + "/coselog_anon_k_5.csv")
+privacy_log = pd.read_csv(str(pathlib.Path().resolve()) + "/out/coselog_anon_k_5.csv")
 
 writer = RewriteLog(log, privacy_log, 'org:resource')
 writer.writer()
