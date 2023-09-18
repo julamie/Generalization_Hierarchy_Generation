@@ -45,17 +45,18 @@ class RewriteAttributes:
         return new_df
 
 # load event log
-log = xes_importer.apply(str(pathlib.Path().resolve()) + "/coselog.xes")
+log = xes_importer.apply(str(pathlib.Path().resolve()) + "/../Component_1/coselog/coselog.xes")
 logs = []
 
 k = 5
 alignment = "Vectorization"
-attribute = "attribute"
-directory = "/path/"
+attribute = "org:resource"
+directory = "../Component_1/coselog/out"
 
 for file in os.listdir(directory):
     privacy_log = pd.read_csv(directory + "/" + os.fsdecode(file))
-    writer = RewriteAttributes(log, privacy_log, 'organization involved')
+    print(directory + "/" + os.fsdecode(file))
+    writer = RewriteAttributes(log, privacy_log, attribute)
     sublog = writer.writer()
 
     logs.append(sublog)
