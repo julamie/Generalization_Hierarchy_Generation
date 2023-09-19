@@ -11,18 +11,16 @@ from pm4py.objects.conversion.log import converter as log_converter
 
 #import Convert_Log
 
-# Event Log Variants
-original_log = xes_importer.apply("logs/BPI_Challenge_2013_incidents.xes")
+# Convert the event log to a DataFrame
+original_log = xes_importer.apply("../../logs/coselog.xes")
 df_log = pm4py.convert_to_dataframe(original_log)
 
+# filter the event log to reduce complexity
 df_log['concept:name'] = df_log['concept:name'] + ' - ' + df_log['lifecycle:transition']
 original_log = pm4py.filter_variants_by_coverage_percentage(original_log, 0.00014)
-alignment = "MSA"
-attribute = "resource country"
-k = 20
 
+# import the anonymized event log
 privacy_log = xes_importer.apply("*INSERT EVENT LOG*")
-
 
 def generate_handovers(log, attribute):
     csv_log = Convert_Log.Convert_Log(log)
@@ -79,7 +77,7 @@ def calculate_precision(privacy_log, attribute):
 
     return privacy_values
 
-
+# abstraction hierarchy for organization country attribute
 organization_country_generalization_values_dict = {'0': ['World', 'World', 'World', 'World'],
                                                    'SE': ['Northern Europe', 'Europe', 'Eurasia', 'World'],
                                                    'au': ['South Asia', 'Asia', 'Euraisa', 'World'],
@@ -104,6 +102,7 @@ organization_country_generalization_values_dict = {'0': ['World', 'World', 'Worl
                                                    'tr': ['Eastern Europe', 'Europe', 'Eurasia', 'World'],
                                                    'us': ['Northern America', 'The Americas', 'World', 'World']}
 
+# abstraction hierarchy for resource country attribute
 resource_country_generalization_values_dict = {'0': ['World', 'World', 'World'],
                                                'Argentina': ['South America', 'The Americas', 'World'],
                                                'Australia': ['Asia', 'Eurasia', 'World'],
@@ -137,6 +136,7 @@ resource_country_generalization_values_dict = {'0': ['World', 'World', 'World'],
                                                'USA': ['North America', 'The Americas', 'World'],
                                                'United Kingdom': ['Europe', 'Eurasia', 'World']}
 
+# abstraction hierarchy for organization role attribute
 org_role_generalization_values_dict = {'nan': ['*', '*', '*'],
                                        '': ['*', '*', '*'],
                                        'A2_1': ['A2*', 'A-M', '*'],
@@ -163,6 +163,7 @@ org_role_generalization_values_dict = {'nan': ['*', '*', '*'],
                                        'V3_2': ['V*', 'N-Z', '*'],
                                        'V3_3': ['V*', 'N-Z', '*']}
 
+# abstraction hierarchy for organization involved attribute
 organization_involved_generalization_values_dict = {
     'Org line A2': ['Org line A-F', 'Org line A-M', 'Org line *'],
     'Org line B': ['Org line A-F', 'Org line A-M', 'Org line * '],
@@ -190,7 +191,7 @@ organization_involved_generalization_values_dict = {
     'Org line V9': ['Org line V', 'Org line V-Z', 'Org line *'],
     'Other': ['Org line *', 'Org line *', 'Org line *']}
 
-
+# abstraction hierarchy for organization resource attribute of coselog
 coselog_resource_generalization_values_dict = {
     'Resource01' : ['Resoure01-10', 'Resource01-20', 'Resource1-40+', 'Resource or Admin'],
     'Resource02' : ['Resoure01-10', 'Resource01-20', 'Resource1-40+', 'Resource or Admin'],
@@ -240,6 +241,7 @@ coselog_resource_generalization_values_dict = {
     'admin3' : ['admin', 'admin', 'admin', 'Resource or Admin']
 }
 
+# dictionary how many times one particular abstraction has been used?
 organization_country_generalization_dict = {'World': 23, 'Northern Europe': 3, 'Europe': 10, 'Southern America': 3,
                                             'South America': 3, 'Northern America': 2, 'East Asia': 3,
                                             'Western Europe': 5, 'South Asia': 4, 'Eastern Europe': 2, 'Asia': 7,
