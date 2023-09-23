@@ -245,3 +245,123 @@ class Weighted_Jaccard:
         # print the hierarchies
         if verbose:
             Clustering.print_hierarchy_for_activities(self.hierarchies)
+
+class N_gram_Jaccard:
+    def __init__(self, log):
+        self.log = log
+        self.connections_df = None
+        self.distance_matrix = None
+        self.activities = None
+        self.linkage = None
+        self.dendrogram = None
+        self.clusterings = None
+        self.hierarchies = None
+
+    def get_log(self):
+        return self.log
+
+    def get_connections_df(self):
+        return self.connections_df
+
+    def get_distance_matrix(self):
+        return self.distance_matrix
+
+    def get_activities(self):
+        return self.activities
+
+    def get_linkage(self):
+        return self.linkage
+
+    def get_dendrogram(self):
+        return self.dendrogram
+
+    def get_clusterings(self):
+        return self.clusterings
+
+    def get_hierarchies(self):
+        return self.hierarchies
+
+    def get_predecessors_path(self, start_node, length):
+        # https://stackoverflow.com/a/28103735
+        # convert event log to an undirected NetworkX graph
+        dfg, start, end = pm4py.discover_dfg(self.log)
+        edge_list = [(edge[0], edge[1], weight) for edge, weight in dfg.items()]
+        G = nx.DiGraph()
+        G.add_weighted_edges_from(edge_list)
+
+        if length == 0:
+            return [[start_node]]
+        paths = []
+        for neighbor in G.predecessors(start_node):
+            for path in self.get_predecessors_path(neighbor,length-1):
+                if start_node not in path:
+                    paths.append([start_node]+path)
+        
+        return paths
+
+    def get_descendants_path(self, start_node, length):
+        # https://stackoverflow.com/a/28103735
+        # convert event log to an undirected NetworkX graph
+        dfg, start, end = pm4py.discover_dfg(self.log)
+        edge_list = [(edge[0], edge[1], weight) for edge, weight in dfg.items()]
+        G = nx.DiGraph()
+        G.add_weighted_edges_from(edge_list)
+
+        if length == 0:
+            return [[start_node]]
+        paths = []
+        for neighbor in nx.descendants(G, start_node):
+            for path in self.get_predecessors_path(neighbor,length-1):
+                if start_node not in path:
+                    paths.append([start_node]+path)
+
+        return paths
+
+    def get_neighbours(self, start_node, length):
+        # get predecessor and descendant paths of start_node 
+        paths_pred = self.get_predecessors_path(start_node, length)
+        paths_desc = self.get_descendants_path(start_node, length)
+
+        # convert the nested list into list of tuples
+        paths_pred = [tuple(path) for path in paths_pred]
+        paths_desc = [tuple(path) for path in paths_desc]
+
+        # convert to sets
+        paths_pred = set(paths_pred)
+        paths_desc = set(paths_desc)
+
+        # join predecessors and descendants and remove duplicates
+        paths = set(paths_pred).union(set(paths_desc))
+        """
+        print(paths)
+        print(len(paths), len(paths_pred) + len(paths_desc)) 
+        """
+
+        return paths
+
+    def get_jaccard_distance(self, node1, node2, length):
+        node1_neighbours = self.get_neighbours(node1, length)
+        node2_neighbours = self.get_neighbours(node2, length)
+
+        node1_neighbours = set([neighbour[1:] for neighbour in node1_neighbours])
+        node2_neighbours = set([neighbour[1:] for neighbour in node2_neighbours])
+
+        intersection = node1_neighbours.intersection(node2_neighbours)
+        union = node1_neighbours.union(node2_neighbours)
+
+        return len(intersection) / len(union)
+
+    def get_jaccard_distance_matrix(self, activities, length):
+        jaccard_table = {} # the distances between the nodes
+
+        # calculate the jaccard distances between all pairs of nodes and save them in jaccard_table
+        for node1 in activities:
+            node1_distances = {}
+            for node2 in activities:
+                similarity = self.get_jaccard_distance(node1, node2, length)
+                node1_distances[node2] = round(1 - similarity, 6)
+            jaccard_table[node1] = node1_distances
+
+        jaccard_table = pd.DataFrame(jaccard_table)
+        
+        return jaccard_table
