@@ -250,6 +250,7 @@ class N_gram_Jaccard:
     def __init__(self, log):
         self.log = log
         self.connections_df = None
+        self.G = None
         self.distance_matrix = None
         self.activities = None
         self.linkage = None
@@ -282,38 +283,24 @@ class N_gram_Jaccard:
         return self.hierarchies
 
     def get_predecessors_path(self, start_node, length):
-        # https://stackoverflow.com/a/28103735
-        # convert event log to an undirected NetworkX graph
-        dfg, start, end = pm4py.discover_dfg(self.log)
-        edge_list = [(edge[0], edge[1], weight) for edge, weight in dfg.items()]
-        G = nx.DiGraph()
-        G.add_weighted_edges_from(edge_list)
-
         if length == 0:
             return [[start_node]]
         paths = []
-        for neighbor in G.predecessors(start_node):
-            for path in self.get_predecessors_path(neighbor,length-1):
+        for neighbor in self.G.predecessors(start_node):
+            for path in self.get_predecessors_path(neighbor, length-1):
                 if start_node not in path:
-                    paths.append([start_node]+path)
+                    paths.append(path + [start_node])
         
         return paths
 
     def get_descendants_path(self, start_node, length):
-        # https://stackoverflow.com/a/28103735
-        # convert event log to an undirected NetworkX graph
-        dfg, start, end = pm4py.discover_dfg(self.log)
-        edge_list = [(edge[0], edge[1], weight) for edge, weight in dfg.items()]
-        G = nx.DiGraph()
-        G.add_weighted_edges_from(edge_list)
-
         if length == 0:
             return [[start_node]]
         paths = []
-        for neighbor in nx.descendants(G, start_node):
-            for path in self.get_predecessors_path(neighbor,length-1):
+        for neighbor in nx.descendants(self.G, start_node):
+            for path in self.get_predecessors_path(neighbor, length-1):
                 if start_node not in path:
-                    paths.append([start_node]+path)
+                    paths.append([start_node] + path)
 
         return paths
 
@@ -323,8 +310,8 @@ class N_gram_Jaccard:
         paths_desc = self.get_descendants_path(start_node, length)
 
         # convert the nested list into list of tuples
-        paths_pred = [tuple(path) for path in paths_pred]
-        paths_desc = [tuple(path) for path in paths_desc]
+        paths_pred = [tuple(path[:-1]) for path in paths_pred]
+        paths_desc = [tuple(path[1:]) for path in paths_desc]
 
         # convert to sets
         paths_pred = set(paths_pred)
@@ -343,11 +330,18 @@ class N_gram_Jaccard:
         node1_neighbours = self.get_neighbours(node1, length)
         node2_neighbours = self.get_neighbours(node2, length)
 
-        node1_neighbours = set([neighbour[1:] for neighbour in node1_neighbours])
-        node2_neighbours = set([neighbour[1:] for neighbour in node2_neighbours])
+        if node1_neighbours is []:
+            print(node1_neighbours)
+        if node2_neighbours is []:
+            print(node2_neighbours)
+        node1_neighbours = set(node1_neighbours)
+        node2_neighbours = set(node2_neighbours)
 
         intersection = node1_neighbours.intersection(node2_neighbours)
         union = node1_neighbours.union(node2_neighbours)
+        #print(set(self.activities))
+        #print(node1 + "->" + node2, node1_neighbours)
+        #print(len(self.activities), len(node1_neighbours))
 
         return len(intersection) / len(union)
 
@@ -365,3 +359,29 @@ class N_gram_Jaccard:
         jaccard_table = pd.DataFrame(jaccard_table)
         
         return jaccard_table
+    
+    def perform_clustering(self, length, verbose=False, ax=None, no_plot=False):
+        # https://stackoverflow.com/a/28103735
+        # convert event log to an undirected NetworkX graph
+        dfg, start, end = pm4py.discover_dfg(self.log)
+        edge_list = [(edge[0], edge[1], weight) for edge, weight in dfg.items()]
+        self.G = nx.DiGraph()
+        self.G.add_weighted_edges_from(edge_list)
+
+        # display the dfg of the given log
+        if verbose:
+            Log_processing.show_dfg_of_log(self.log)
+
+        # convert the log to a DataFrame 
+        self.connections_df = Log_processing.get_pivot_df_from_dfg(self.log)
+        self.activities = self.connections_df.columns
+
+        self.distance_matrix = self.get_jaccard_distance_matrix(self.activities, length)
+
+        # print the distances between events
+        if verbose:
+            print(self.distance_matrix)        
+            
+        # perform hierarchical clustering and generate the resulting dendrogram
+        self.linkage = Clustering.create_linkage(self.distance_matrix.to_numpy())
+        self.dendrogram = Clustering.create_dendrogram(self.activities, self.linkage, ax=ax, no_plot=no_plot)
