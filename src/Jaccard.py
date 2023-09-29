@@ -246,7 +246,7 @@ class Weighted_Jaccard:
         if verbose:
             Clustering.print_hierarchy_for_activities(self.hierarchies)
 
-class N_gram_Jaccard:
+class Jaccard_N_grams:
     def __init__(self, log):
         self.log = log
         self.connections_df = None
@@ -263,6 +263,9 @@ class N_gram_Jaccard:
 
     def get_connections_df(self):
         return self.connections_df
+
+    def get_G(self):
+        return self.G
 
     def get_distance_matrix(self):
         return self.distance_matrix
@@ -282,70 +285,102 @@ class N_gram_Jaccard:
     def get_hierarchies(self):
         return self.hierarchies
 
-    def get_predecessors_path(self, start_node, length):
-        if length == 0:
-            return [[start_node]]
-        paths = []
-        for neighbor in self.G.predecessors(start_node):
-            for path in self.get_predecessors_path(neighbor, length-1):
-                if start_node not in path:
-                    paths.append(path + [start_node])
+    def get_predecessors_len_n(self, curr_node, length):
+        """
+        Recursively finds all variants of paths of length n that have an outgoing link at the last node to curr_node.
+        In other words: If there is a path from a node A to curr_node of length n, then it is the predecessor_paths list
         
-        return paths
-
-    def get_descendants_path(self, start_node, length):
+        Every solution always includes curr_node.
+        Solution adapted from: https://stackoverflow.com/a/28103735
+        """
+        
+        # Base case: Return a list with one list item curr_node
         if length == 0:
-            return [[start_node]]
-        paths = []
-        for neighbor in nx.descendants(self.G, start_node):
-            for path in self.get_predecessors_path(neighbor, length-1):
-                if start_node not in path:
-                    paths.append([start_node] + path)
+            return [[curr_node]]
+        
+        # the result list
+        predecessor_paths = []
+        
+        # recursively generate predecessors_paths
+        for neighbor in self.G.predecessors(curr_node):
+            for path in self.get_predecessors_len_n(neighbor, length-1):
+                # add curr_node only if it is not already in there, loops don't count
+                if curr_node not in path:
+                    predecessor_paths.append(path + [curr_node])
+        
+        return predecessor_paths
 
-        return paths
+    def get_successors_len_n(self, curr_node, length):
+        """
+        Recursively finds all variants of paths of length n that have an ingoing link at the first node from curr_node.
+        In other words: If there is a path from curr_node to a node A of length n, then it is the successor_paths list
+        
+        Every solution always includes curr_node.
+        Solution adapted from: https://stackoverflow.com/a/28103735
+        """
+
+        # Base case: Return a list with one list item curr_node
+        if length == 0:
+            return [[curr_node]]
+        
+        # the result list
+        successor_paths = []
+
+        # recursively generate successors_path
+        for neighbor in nx.descendants(self.G, curr_node):
+            for path in self.get_successors_len_n(neighbor, length-1):
+                # add curr_node only if it is not already in there, loops don't count
+                if curr_node not in path:
+                    successor_paths.append([curr_node] + path)
+
+        return successor_paths
 
     def get_neighbours(self, start_node, length):
-        # get predecessor and descendant paths of start_node 
-        paths_pred = self.get_predecessors_path(start_node, length)
-        paths_desc = self.get_descendants_path(start_node, length)
+        """
+        Get all paths of length n that lead to start_node and start from start_node and join them together
+        """
 
-        # convert the nested list into list of tuples
+        # get predecessor and descendant paths of start_node 
+        paths_pred = self.get_predecessors_len_n(start_node, length)
+        paths_succ = self.get_successors_len_n(start_node, length)
+
+        # convert the nested list into list of tuples and remove the start_node
         paths_pred = [tuple(path[:-1]) for path in paths_pred]
-        paths_desc = [tuple(path[1:]) for path in paths_desc]
+        paths_succ = [tuple(path[1:]) for path in paths_succ]
 
         # convert to sets
         paths_pred = set(paths_pred)
-        paths_desc = set(paths_desc)
+        paths_succ = set(paths_succ)
 
         # join predecessors and descendants and remove duplicates
-        paths = set(paths_pred).union(set(paths_desc))
-        """
-        print(paths)
-        print(len(paths), len(paths_pred) + len(paths_desc)) 
-        """
+        paths = set(paths_pred).union(set(paths_succ))
 
         return paths
 
     def get_jaccard_distance(self, node1, node2, length):
+        """
+        Determine the Jaccard similarity between the two nodes.
+        """
+
+        # get neighbours of node1 and node2
         node1_neighbours = self.get_neighbours(node1, length)
         node2_neighbours = self.get_neighbours(node2, length)
 
-        if node1_neighbours is []:
-            print(node1_neighbours)
-        if node2_neighbours is []:
-            print(node2_neighbours)
+        # convert the lists to sets
         node1_neighbours = set(node1_neighbours)
         node2_neighbours = set(node2_neighbours)
 
+        # find the intersection and union of the sets
         intersection = node1_neighbours.intersection(node2_neighbours)
         union = node1_neighbours.union(node2_neighbours)
-        #print(set(self.activities))
-        #print(node1 + "->" + node2, node1_neighbours)
-        #print(len(self.activities), len(node1_neighbours))
 
         return len(intersection) / len(union)
 
     def get_jaccard_distance_matrix(self, activities, length):
+        """
+        Computes the Jaccard distance between all pairs of labels and converts them to a distance matrix
+        """
+
         jaccard_table = {} # the distances between the nodes
 
         # calculate the jaccard distances between all pairs of nodes and save them in jaccard_table
@@ -361,7 +396,11 @@ class N_gram_Jaccard:
         return jaccard_table
     
     def perform_clustering(self, length, verbose=False, ax=None, no_plot=False):
-        # https://stackoverflow.com/a/28103735
+        '''
+        Performs all necessary steps to perform hierarchical clustering using Jaccard with n_grams
+        and then generating a hierarchy used for abstracting the event log
+        '''
+
         # convert event log to an undirected NetworkX graph
         dfg, start, end = pm4py.discover_dfg(self.log)
         edge_list = [(edge[0], edge[1], weight) for edge, weight in dfg.items()]
@@ -376,6 +415,7 @@ class N_gram_Jaccard:
         self.connections_df = Log_processing.get_pivot_df_from_dfg(self.log)
         self.activities = self.connections_df.columns
 
+        # generate the distance matrix
         self.distance_matrix = self.get_jaccard_distance_matrix(self.activities, length)
 
         # print the distances between events
