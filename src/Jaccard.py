@@ -327,7 +327,7 @@ class Jaccard_N_grams:
         successor_paths = []
 
         # recursively generate successors_path
-        for neighbor in nx.descendants(self.G, curr_node):
+        for neighbor in self.G.successors(curr_node):
             for path in self.get_successors_len_n(neighbor, length-1):
                 # add curr_node only if it is not already in there, loops don't count
                 if curr_node not in path:
@@ -335,14 +335,14 @@ class Jaccard_N_grams:
 
         return successor_paths
 
-    def get_neighbours(self, start_node, length):
+    def get_neighbours(self, curr_node, length):
         """
         Get all paths of length n that lead to start_node and start from start_node and join them together
         """
 
         # get predecessor and descendant paths of start_node 
-        paths_pred = self.get_predecessors_len_n(start_node, length)
-        paths_succ = self.get_successors_len_n(start_node, length)
+        paths_pred = self.get_predecessors_len_n(curr_node, length)
+        paths_succ = self.get_successors_len_n(curr_node, length)
 
         # convert the nested list into list of tuples and remove the start_node
         paths_pred = [tuple(path[:-1]) for path in paths_pred]
