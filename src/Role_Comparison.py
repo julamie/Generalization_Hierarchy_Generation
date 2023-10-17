@@ -68,7 +68,7 @@ class Role_Comparison:
 
         # make a pivot table using the values and replace the NaNs by 1
         self.role_counts = self.role_counts.pivot(index=self.activities_column, columns=self.roles_column, values=0)
-        self.role_counts = self.role_counts.fillna(1)
+        self.role_counts = self.role_counts.fillna(0)
         return self.role_counts
 
     def calculate_jaccard_similarity(self, act1, act2, weighted):
