@@ -1,32 +1,110 @@
-import Jaccard, Simrank
+import Jaccard, Simrank, Role_Comparison, Label_Similarity
 from scipy.cluster.hierarchy import fcluster
 from sklearn.metrics import rand_score, mutual_info_score
 import matplotlib.pyplot as plt
 import tanglegram as tg
 import pandas as pd
 
-def show_dendrograms_for_event_log(log, figure_title, output_file_name):
+def show_jaccard_dendrograms_for_event_log(log, figure_title, output_file_name):
     '''
-    Prints the dendrograms from a given log using all distance measures, saves the generated figure in out folder
+    Prints the dendrograms from a given log using the Jaccard distance measures, saves the generated figure in out folder
     '''
 
-    fig, ax = plt.subplots(2, 2, figsize=(20, 10))
+    fig, ax = plt.subplots(1, 2, figsize=(15, 5))
     fig.suptitle(figure_title)
 
-    ax[0, 0].set_title("Simple Jaccard")
-    ax[0, 1].set_title("Weighted Jaccard")
-    ax[1, 0].set_title("Simple Simrank")
-    ax[1, 1].set_title("Weighted Simrank")
+    ax[0].set_title("Simple Jaccard")
+    ax[1].set_title("Weighted Jaccard")
 
     simple_jaccard = Jaccard.Simple_Jaccard(log)
     weighted_jaccard = Jaccard.Weighted_Jaccard(log)
+
+    simple_jaccard.perform_clustering(ax=ax[0])
+    weighted_jaccard.perform_clustering(ax=ax[1])
+
+    fig.tight_layout()
+    plt.show()
+    fig.savefig("../out/" + output_file_name)
+
+def show_simrank_dendrograms_for_event_log(log, figure_title, output_file_name):
+    '''
+    Prints the dendrograms from a given log using the Simrank distance measures, saves the generated figure in out folder
+    '''
+
+    fig, ax = plt.subplots(1, 2, figsize=(15, 5))
+    fig.suptitle(figure_title)
+
+    ax[0].set_title("Simple Simrank")
+    ax[1].set_title("Weighted Simrank")
+
     simple_simrank = Simrank.Simple_Simrank(log)
     weighted_simrank = Simrank.Weighted_Simrank(log)
 
-    simple_jaccard.perform_clustering(ax=ax[0, 0])
-    weighted_jaccard.perform_clustering(ax=ax[0, 1])
-    simple_simrank.perform_clustering(ax=ax[1, 0])
-    weighted_simrank.perform_clustering(ax=ax[1, 1])
+    simple_simrank.perform_clustering(ax=ax[0])
+    weighted_simrank.perform_clustering(ax=ax[1])
+
+    fig.tight_layout()
+    plt.show()
+    fig.savefig("../out/" + output_file_name)
+
+def show_n_gram_dendrograms_for_event_log(log, figure_title, output_file_name):
+    '''
+    Prints the dendrograms from a given log using the N_gram Jaccard distance measures, saves the generated figure in out folder
+    '''
+
+    fig, ax = plt.subplots(4, 2, figsize=(15, 15))
+    fig.suptitle(figure_title)
+
+    ax[0, 0].set_title("Simple Jaccard N_gram length = 1")
+    ax[0, 1].set_title("Weighted Jaccard N_gram length = 1")
+    ax[1, 0].set_title("Simple Jaccard N_gram length = 2")
+    ax[1, 1].set_title("Weighted Jaccard N_gram length = 2")
+    ax[2, 0].set_title("Simple Jaccard N_gram length = 3")
+    ax[2, 1].set_title("Weighted Jaccard N_gram length = 3")
+    ax[3, 0].set_title("Simple Jaccard N_gram length = 4")
+    ax[3, 1].set_title("Weighted Jaccard N_gram length = 4")
+
+    simple_n_gram = Jaccard.Jaccard_N_grams(log)
+    weighted_n_gram = Jaccard.Weighted_Jaccard_N_grams(log)
+
+    simple_n_gram.perform_clustering(length=1, ax=ax[0, 0])
+    weighted_n_gram.perform_clustering(length=1, ax=ax[0, 1])
+    simple_n_gram.perform_clustering(length=2, ax=ax[1, 0])
+    weighted_n_gram.perform_clustering(length=2, ax=ax[1, 1])
+    simple_n_gram.perform_clustering(length=3, ax=ax[2, 0])
+    weighted_n_gram.perform_clustering(length=3, ax=ax[2, 1])
+    simple_n_gram.perform_clustering(length=4, ax=ax[3, 0])
+    weighted_n_gram.perform_clustering(length=4, ax=ax[3, 1])
+
+    fig.tight_layout()
+    plt.show()
+    fig.savefig("../out/" + output_file_name)
+
+def show_role_comparison_dendrograms_for_event_log(log, activities_column, roles_column, figure_title, output_file_name):
+    '''
+    Prints the dendrograms from a given log using the role comparison distance measures, saves the generated figure in out folder
+    '''
+
+    fig, ax = plt.subplots(1, figsize=(10, 5))
+    fig.suptitle(figure_title)
+
+    role_comp = Role_Comparison.Role_Comparison(log, activities_column=activities_column, roles_column=roles_column)
+    role_comp.perform_clustering(ax=ax)
+
+    fig.tight_layout()
+    plt.show()
+    fig.savefig("../out/" + output_file_name)
+
+def show_label_similarity_dendrograms_for_event_log(log, figure_title, output_file_name):
+    '''
+    Prints the dendrograms from a given log using the label similarity distance measures, saves the generated figure in out folder
+    '''
+
+    fig, ax = plt.subplots(1, figsize=(10, 5))
+    fig.suptitle(figure_title)
+
+    role_comp = Label_Similarity.Label_Similarity(log)
+    role_comp.perform_clustering(ax=ax)
 
     fig.tight_layout()
     plt.show()
@@ -115,6 +193,10 @@ def compare_dendrogram_using_mutual_info_score(metric1, metric2):
     return mutual_info_scores
 
 def show_tanglegram(metric1, metric2):
+    '''
+    Shows a tanglegram of two used metrics to show which labels have been assigned differently
+    '''
+
     metric1.perform_clustering(no_plot=True)
     metric2.perform_clustering(no_plot=True)
 
