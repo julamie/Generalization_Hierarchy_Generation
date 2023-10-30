@@ -302,17 +302,24 @@ class Jaccard_N_grams:
         if node1 == node2:
             return 1
 
-        # get neighbours of node1 and node2
-        node1_neighbours = self.get_neighbours(node1, length)
-        node2_neighbours = self.get_neighbours(node2, length)
+        node1_neighbours = []
+        node2_neighbours = []
 
-        # handle edge cases where there were no paths of length n found
-        if len(node1_neighbours) == 0 or len(node2_neighbours) == 0:
-            return 0 
+        # get the neighbour paths of all lengths less than the given length and add them to nodeX_neighbours
+        while length >= 1:
+            # get neighbours of node1 and node2
+            node1_neighbours += self.get_neighbours(node1, length)
+            node2_neighbours += self.get_neighbours(node2, length)
+
+            length -= 1
 
         # convert the lists to sets
         node1_neighbours = set(node1_neighbours)
         node2_neighbours = set(node2_neighbours)
+
+        # handle edge cases where there were no paths of length n found
+        if len(node1_neighbours) == 0 or len(node2_neighbours) == 0:
+            return 0 
 
         # find the intersection and union of the sets
         intersection = node1_neighbours.intersection(node2_neighbours)
@@ -460,17 +467,24 @@ class Weighted_Jaccard_N_grams:
         if node1 == node2:
             return 1
 
-        # get neighbours of node1 and node2
-        node1_neighbours = self.get_neighbours(node1, length)
-        node2_neighbours = self.get_neighbours(node2, length)
+        node1_neighbours = []
+        node2_neighbours = []
+        
+        # get the neighbour paths of all lengths less than the given length and add them to nodeX_neighbours
+        while length >= 1:
+            # get neighbours of node1 and node2
+            node1_neighbours += self.get_neighbours(node1, length)
+            node2_neighbours += self.get_neighbours(node2, length)
 
-        # handle edge cases where there were no paths of length n found
-        if len(node1_neighbours) == 0 or len(node2_neighbours) == 0:
-            return 0 
+            length -= 1
 
         # convert the lists to sets
         node1_neighbours = set(node1_neighbours)
         node2_neighbours = set(node2_neighbours)
+
+        # handle edge cases where there were no paths of length n found
+        if len(node1_neighbours) == 0 or len(node2_neighbours) == 0:
+            return 0 
 
         # find the intersection of the sets
         intersection = node1_neighbours.intersection(node2_neighbours)
