@@ -15,30 +15,6 @@ class Simple_Jaccard:
         self.dendrogram = None
         self.clusterings = None
         self.hierarchies = None
-
-    def get_log(self):
-        return self.log
-
-    def get_distances(self):
-        return self.distances
-
-    def get_distance_matrix(self):
-        return self.distance_matrix
-
-    def get_activities(self):
-        return self.activities
-
-    def get_linkage(self):
-        return self.linkage
-
-    def get_dendrogram(self):
-        return self.dendrogram
-
-    def get_clusterings(self):
-        return self.clusterings
-
-    def get_hierarchies(self):
-        return self.hierarchies
         
     def get_jaccard_distance_of_dfg(self):
         '''
@@ -129,30 +105,6 @@ class Weighted_Jaccard:
         self.dendrogram = None
         self.clusterings = None
         self.hierarchies = None
-
-    def get_log(self):
-        return self.log
-
-    def get_connections_df(self):
-        return self.connections_df
-
-    def get_distance_matrix(self):
-        return self.distance_matrix
-
-    def get_activities(self):
-        return self.activities
-
-    def get_linkage(self):
-        return self.linkage
-
-    def get_dendrogram(self):
-        return self.dendrogram
-
-    def get_clusterings(self):
-        return self.clusterings
-
-    def get_hierarchies(self):
-        return self.hierarchies
 
     def calculate_weighted_jaccard_similarity(self, G, node1, node2):
         '''
@@ -257,33 +209,6 @@ class Jaccard_N_grams:
         self.dendrogram = None
         self.clusterings = None
         self.hierarchies = None
-
-    def get_log(self):
-        return self.log
-
-    def get_connections_df(self):
-        return self.connections_df
-
-    def get_G(self):
-        return self.G
-
-    def get_distance_matrix(self):
-        return self.distance_matrix
-
-    def get_activities(self):
-        return self.activities
-
-    def get_linkage(self):
-        return self.linkage
-
-    def get_dendrogram(self):
-        return self.dendrogram
-
-    def get_clusterings(self):
-        return self.clusterings
-
-    def get_hierarchies(self):
-        return self.hierarchies
 
     def get_predecessors_len_n(self, curr_node, length):
         """
@@ -441,33 +366,6 @@ class Weighted_Jaccard_N_grams:
         self.dendrogram = None
         self.clusterings = None
         self.hierarchies = None
-
-    def get_log(self):
-        return self.log
-
-    def get_connections_df(self):
-        return self.connections_df
-
-    def get_G(self):
-        return self.G
-
-    def get_distance_matrix(self):
-        return self.distance_matrix
-
-    def get_activities(self):
-        return self.activities
-
-    def get_linkage(self):
-        return self.linkage
-
-    def get_dendrogram(self):
-        return self.dendrogram
-
-    def get_clusterings(self):
-        return self.clusterings
-
-    def get_hierarchies(self):
-        return self.hierarchies
     
     def get_predecessors_len_n(self, curr_node, length):
         """
