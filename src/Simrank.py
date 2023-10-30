@@ -17,30 +17,6 @@ class Simple_Simrank:
         self.clusterings = None
         self.hierarchies = None
 
-    def get_log(self):
-        return self.log
-
-    def pairwise_distances(self):
-        return self.pairwise_distances
-
-    def get_distance_matrix(self):
-        return self.distance_matrix
-
-    def get_activities(self):
-        return self.activities
-
-    def get_linkage(self):
-        return self.linkage
-
-    def get_dendrogram(self):
-        return self.dendrogram
-
-    def get_clusterings(self):
-        return self.clusterings
-
-    def get_hierarchies(self):
-        return self.hierarchies
-
     def get_simrank_distance_of_dfg(self):
         '''
         Computes the simrank similarity of two nodes using the DFG
@@ -119,30 +95,6 @@ class Weighted_Simrank:
         self.dendrogram = None
         self.clusterings = None
         self.hierarchies = None
-
-    def get_log(self):
-        return self.log
-
-    def get_connections_df(self):
-        return self.connections_df
-
-    def get_distance_matrix(self):
-        return self.distance_matrix
-
-    def get_activities(self):
-        return self.activities
-
-    def get_linkage(self):
-        return self.linkage
-
-    def get_dendrogram(self):
-        return self.dendrogram
-
-    def get_clusterings(self):
-        return self.clusterings
-
-    def get_hierarchies(self):
-        return self.hierarchies
 
     def perform_clustering(self, verbose=False, ax=None, no_plot=False):
         '''

@@ -15,30 +15,6 @@ class Label_Similarity:
         self.clusterings = None
         self.hierarchies = None
 
-    def get_log(self):
-        return self.log
-
-    def get_nlp(self):
-        return self.nlp
-
-    def get_distance_matrix(self):
-        return self.distance_matrix
-
-    def get_activities(self):
-        return self.activities
-
-    def get_linkage(self):
-        return self.linkage
-
-    def get_dendrogram(self):
-        return self.dendrogram
-
-    def get_clusterings(self):
-        return self.clusterings
-
-    def get_hierarchies(self):
-        return self.hierarchies
-    
     def calculate_label_similarity(self, act1_label, act2_label):
         """
         Computes the similarity of the label names using the Scipy NLP library. 
