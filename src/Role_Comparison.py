@@ -16,39 +16,6 @@ class Role_Comparison:
         self.clusterings = None
         self.hierarchies = None
 
-    def get_log(self):
-        return self.log
-
-    def get_role_counts(self):
-        return self.role_counts
-
-    def get_distance_matrix(self):
-        return self.distance_matrix
-
-    def get_activities(self):
-        return self.activities
-
-    def get_roles(self):
-        return self.roles
-
-    def get_activities_column(self):
-        return self.activities_column
-
-    def get_roles_column(self):
-        return self.roles_column
-
-    def get_linkage(self):
-        return self.linkage
-
-    def get_dendrogram(self):
-        return self.dendrogram
-
-    def get_clusterings(self):
-        return self.clusterings
-
-    def get_hierarchies(self):
-        return self.hierarchies
-    
     def generate_role_counts(self):
         """
         Generates a DataFrame for every pair of activity and role. If the role doesn't perform the activity, the value is 0.
