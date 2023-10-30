@@ -56,7 +56,7 @@ class Simple_Jaccard:
         dg.add_weighted_edges_from(edge_list)
 
         # compute the jaccard measures of the nodes
-        distances = nx.jaccard_coefficient(dg.to_undirected())
+        distances = nx.jaccard_coefficient(dg.to_undirected(), ebunch=dg.edges)
 
         return distances
 
@@ -304,9 +304,7 @@ class Jaccard_N_grams:
         # recursively generate predecessors_paths
         for neighbor in self.G.predecessors(curr_node):
             for path in self.get_predecessors_len_n(neighbor, length-1):
-                # add curr_node only if it is not already in there, loops don't count
-                if curr_node not in path:
-                    predecessor_paths.append(path + [curr_node])
+                predecessor_paths.append(path + [curr_node])
         
         return predecessor_paths
 
@@ -329,9 +327,7 @@ class Jaccard_N_grams:
         # recursively generate successors_path
         for neighbor in self.G.successors(curr_node):
             for path in self.get_successors_len_n(neighbor, length-1):
-                # add curr_node only if it is not already in there, loops don't count
-                if curr_node not in path:
-                    successor_paths.append([curr_node] + path)
+                successor_paths.append([curr_node] + path)
 
         return successor_paths
 
