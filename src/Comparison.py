@@ -4,6 +4,9 @@ from sklearn.metrics import rand_score, mutual_info_score
 import matplotlib.pyplot as plt
 import tanglegram as tg
 import pandas as pd
+import pm4py
+from pm4py.algo.organizational_mining.sna import algorithm as sna
+import webbrowser
 
 def show_jaccard_dendrograms_for_event_log(log, figure_title, output_file_name):
     '''
@@ -206,3 +209,13 @@ def show_tanglegram(metric1, metric2):
     fig = tg.plot(jacc_df, simrank_df, sort=True)
     fig.set_size_inches(32, 10)
     plt.show()
+
+def save_and_open_handover_graph_of_log(log, resource_key, filename):
+    '''
+    Creates a handover graph of the given log with given attribute and saves it at ../out/{filename} as an html file.
+    Opens this file in a browser
+    '''
+
+    handover = pm4py.discover_handover_of_work_network(log, resource_key=resource_key, timestamp_key='time:timestamp', case_id_key='case:concept:name')
+    pm4py.save_vis_sna(handover, f"../out/{filename}", variant_str=sna.Variants.HANDOVER_LOG)
+    webbrowser.open_new_tab(f"../out/{filename}")
