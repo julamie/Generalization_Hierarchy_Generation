@@ -1,6 +1,6 @@
 import Jaccard, Simrank, Role_Comparison, Label_Similarity
 from scipy.cluster.hierarchy import fcluster
-from sklearn.metrics import rand_score, mutual_info_score
+from sklearn.metrics import rand_score, mutual_info_score, fowlkes_mallows_score
 import matplotlib.pyplot as plt
 import tanglegram as tg
 import pandas as pd
@@ -118,13 +118,9 @@ def compare_dendrogram_using_rand_score(metric1, metric2):
     Calculates the rand score between two clusterings for every level. Plots the result
     '''
 
-    # perform clustering using the different distance metrics given
-    metric1.perform_clustering(no_plot=True)
-    metric2.perform_clustering(no_plot=True)
-
     # save their linkages
-    metric1_linkage = metric1.get_linkage()
-    metric2_linkage = metric2.get_linkage()
+    metric1_linkage = metric1.linkage
+    metric2_linkage = metric2.linkage
 
     # create a dictionary for every clustering in each level in the dendrogram
     metric1_dict = {}
@@ -132,7 +128,7 @@ def compare_dendrogram_using_rand_score(metric1, metric2):
 
     # every level two clusters merge to one. There are number of activities
     # many clusters at the beginning
-    number_of_levels = len(metric1.get_activities())
+    number_of_levels = len(metric1.activities)
 
     # add every clustering in each level to their dictionary
     for num_clusters in range(1, number_of_levels):
@@ -159,13 +155,9 @@ def compare_dendrogram_using_mutual_info_score(metric1, metric2):
     Calculates the mutual information score between two clusterings for every level. Plots the result
     '''
 
-    # perform clustering using the different distance metrics given
-    metric1.perform_clustering(no_plot=True)
-    metric2.perform_clustering(no_plot=True)
-
     # save their linkages
-    metric1_linkage = metric1.get_linkage()
-    metric2_linkage = metric2.get_linkage()
+    metric1_linkage = metric1.linkage
+    metric2_linkage = metric2.linkage
 
     # create a dictionary for every clustering in each level in the dendrogram
     metric1_dict = {}
@@ -173,7 +165,7 @@ def compare_dendrogram_using_mutual_info_score(metric1, metric2):
 
     # every level two clusters merge to one. There are number of activities
     # many clusters at the beginning
-    number_of_levels = len(metric1.get_activities())
+    number_of_levels = len(metric1.activities)
 
     # add every clustering in each level to their dictionary
     for num_clusters in range(1, number_of_levels):
@@ -194,6 +186,43 @@ def compare_dendrogram_using_mutual_info_score(metric1, metric2):
     fig.show()
 
     return mutual_info_scores
+
+def compare_dendrogram_using_fowlkes_mallows_score(metric1, metric2):
+    '''
+    Calculates the Fowlkes-Mallows score between two clusterings for every level. Plots the result
+    '''
+
+    # save their linkages
+    metric1_linkage = metric1.linkage
+    metric2_linkage = metric2.linkage
+
+    # create a dictionary for every clustering in each level in the dendrogram
+    metric1_dict = {}
+    metric2_dict = {}
+
+    # every level two clusters merge to one. There are number of activities
+    # many clusters at the beginning
+    number_of_levels = len(metric1.activities)
+
+    # add every clustering in each level to their dictionary
+    for num_clusters in range(1, number_of_levels):
+        metric1_dict[num_clusters] = fcluster(metric1_linkage, num_clusters, criterion='maxclust')
+        metric2_dict[num_clusters] = fcluster(metric2_linkage, num_clusters, criterion='maxclust')
+    
+    # create list of mutual info score per level
+    fm_scores = {}
+    for num_clusters in range(1, number_of_levels):
+        fm_scores[num_clusters] = fowlkes_mallows_score(metric1_dict[num_clusters], metric2_dict[num_clusters])
+
+    # plot data
+    fig = plt.figure()
+    plt.title("Fowlkes-Mallows scores per number of clusters")
+    plt.xlabel("Number of clusters")
+    plt.ylabel("Fowlkes-Mallows score")
+    plt.plot(list(fm_scores.keys()), list(fm_scores.values()))
+    fig.show()
+
+    return fm_scores
 
 def show_tanglegram(metric1, metric2):
     '''
