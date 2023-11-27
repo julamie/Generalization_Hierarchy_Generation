@@ -143,6 +143,13 @@ def generate_hierarchy_file_with_dummies(activities, distance_matrix, linkage_ma
                     cluster_to_string = "{" + ', '.join(level) + "};"
                     f.write(cluster_to_string)
 
+        # find out the number of levels and
+        # add last line of -;-;- as many times as levels are needed
+        first_activity = list(hierarchies.keys())[0]
+        num_levels = len(hierarchies[first_activity])
+        last_line = "-;" * (num_levels - 1) + "-"
+        f.write(last_line)
+
 def generate_hierarchy_file(linkage, activities, num_levels, file_name):
     '''
     Generates the file for the hierarchy of activities in out/file_name.
@@ -179,6 +186,13 @@ def generate_hierarchy_file(linkage, activities, num_levels, file_name):
                 else:
                     cluster_to_string = "{" + ', '.join(level) + "};"
                     f.write(cluster_to_string)
+
+        # find out the number of levels and
+        # add last line of -;-;- as many times as levels are needed
+        first_activity = list(hierarchies.keys())[0]
+        num_levels = len(hierarchies[first_activity])
+        last_line = "-;" * (num_levels - 1) + "-"
+        f.write(last_line)
 
 def create_clusterings_for_every_level(activities, distances, linkage_matrix):
     '''
