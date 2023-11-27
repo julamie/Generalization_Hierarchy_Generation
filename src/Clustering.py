@@ -127,7 +127,7 @@ def generate_hierarchy_file_with_dummies(activities, distance_matrix, linkage_ma
     hierarchies = create_hierarchy_with_dummies(activities, distance_matrix, linkage_matrix)
 
     # write the hierarchy output file
-    with open(f"/out/{file_name}", 'w') as f:
+    with open(f"out/{file_name}", 'w') as f:
         for activity in hierarchies:
             first_element = True
             for level in hierarchies[activity]:
@@ -164,7 +164,7 @@ def generate_hierarchy_file(linkage, activities, num_levels, file_name):
     hierarchies = create_hierarchy_levels(activities, cluster_data)
 
     # write the hierarchy output file
-    with open(f"/out/{file_name}", 'w') as f:
+    with open(f"out/{file_name}", 'w') as f:
         for activity in hierarchies:
             first_element = True
             for level in hierarchies[activity]:
