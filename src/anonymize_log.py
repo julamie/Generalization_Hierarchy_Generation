@@ -4,7 +4,9 @@ import csv
 import pandas as pd
 from pm4py.statistics.traces.generic.log import case_statistics
 import subprocess
-import Log_processing
+
+import Jaccard, Role_Comparison, Label_Similarity
+import Log_processing, Clustering
 
 class Event_log:
     def __init__(self, event_log_path, output_file_prefix):
@@ -45,9 +47,11 @@ class Event_log:
                 f.write("> " + str(counter) + '\n')
                 f.write("%s\n" % ''.join(str(col) for col in row))
                 counter += 1
+        print("Complete ✓")
 
     def run_mafft(self):
         subprocess.run(f"mafft --text out/{self.output_file_prefix}.csv > out/{self.output_file_prefix}_mafft.csv", shell=True)
+        print("Complete ✓")
 
     def convert_mafft_file_to_arx_output_file(self):
         writer = []
@@ -92,37 +96,45 @@ class Event_log:
             f.write(header + "\n")
             for trace in writer:
                 f.write("%s\n" % ', '.join(trace))
+        print("Complete ✓")
 
-    def run_arx(self, k):
+    def run_arx(self, k, hierarchy_file=None):
         subprocess.run("javac -cp .:arx-3.9.1-gtk-64.jar ARXAnonymizeAttributes.java", shell=True)
         arx_file = f'out/{self.output_file_prefix}_for_arx_mafft.csv'
-        hierarchy_file = f'{self.output_file_prefix}_hierarchy.csv'
+        if not hierarchy_file:
+            hierarchy_file = f'out/{self.output_file_prefix}_hierarchy.csv'
+        else:
+            hierarchy_file = f'out/{hierarchy_file}'
         output_file = f'out/{self.output_file_prefix}_anon_k_{k}.csv'
         command = f"java -cp .:arx-3.9.1-gtk-64.jar ARXAnonymizeAttributes {arx_file} {hierarchy_file} {output_file} {k}"
         subprocess.run(command, shell=True)
+        print("Complete ✓")
 
-    def rewrite_traces_in_log(self, attribute, k):
+    def rewrite_traces_in_log(self, k, attribute=""):
+        pd.set_option('mode.chained_assignment', None)
+
         privacy_log = pd.read_csv(f'out/{self.output_file_prefix}_anon_k_{k}.csv')
         frames = []
         attribute_writer = []
         attribute_length = []
+        counter = 0
+
         for i in privacy_log.values:
+            # print progress
+            counter += 1
+            if counter % 100 == 0:
+                print(f"{counter}/{len(privacy_log.values)} traces processed")
+            
             # trace is one row of values in privacy log
             trace = self.df_log[self.df_log['case:concept:name'] == i[0]]
             trace_a = []
             attribute_variant = []
             # append all events which are not "-" to trace_a
             for j in range(1, len(i)):
-                if i[j] == '-':
-                    continue
-                else:
+                if i[j] != '-':
                     trace_a.append(i[j])
             # if values were "-", replace these with trace_a
-            if len(trace['concept:name']) != len(trace_a):
-                pass
-                #print(trace['concept:name'])
-                #print(trace_a)
-            else:
+            if len(trace['concept:name']) == len(trace_a):
                 trace.drop('concept:name', axis=1, inplace=True)
                 trace['concept:name'] = trace_a
             
@@ -131,34 +143,64 @@ class Event_log:
             attribute_variant.append(i[0])
             
             # add all values of the given attribute to attribute_variant
-            for value in trace[attribute].values.tolist():
-                attribute_variant.append(value)
-            # add the list of the variant plus all values of the attribute to attribute_writer 
-            attribute_writer.append(attribute_variant)
-            attribute_length.append(len(attribute_variant))
+            if attribute != "":
+                for value in trace[attribute].values.tolist():
+                    attribute_variant.append(value)
+                # add the list of the variant plus all values of the attribute to attribute_writer 
+                attribute_writer.append(attribute_variant)
+                attribute_length.append(len(attribute_variant))
             
         # convert all traces in the list frames to an event log
         new_df = pd.concat(frames)
         event_log = pm4py.convert_to_event_log(new_df)
         pm4py.write_xes(event_log, f"out/{self.output_file_prefix}_anonymized_log_k_{k}.xes")
         
-        # set of all unique attribute lengths
-        unique_attribute_length = set(attribute_length)
-        for size in unique_attribute_length:
-            with open(f"out/{self.output_file_prefix}_for_arx_resource_attribute_" + str(size) + ".csv", "w") as f:
-                # write top line for csv file
-                f.write("variant")
-                for i in range(1, size):
-                    f.write(",row_" + str(i))
-                f.write("\n")
+        if attribute != "":
+            # set of all unique attribute lengths
+            unique_attribute_length = set(attribute_length)
+            for size in unique_attribute_length:
+                with open(f"out/{self.output_file_prefix}_for_arx_resource_attribute_" + str(size) + ".csv", "w") as f:
+                    # write top line for csv file
+                    f.write("variant")
+                    for i in range(1, size):
+                        f.write(",row_" + str(i))
+                    f.write("\n")
 
-                # write traces of length size to file
-                for trace in attribute_writer:
-                    if len(trace) == size:
-                        f.write("%s\n" % ', '.join(trace))
+                    # write traces of length size to file
+                    for trace in attribute_writer:
+                        if len(trace) == size:
+                            f.write("%s\n" % ', '.join(trace))
+        print("Complete ✓")
 
 # --------------------------------------------------------
-def anonymize_log(event_log_path, output_file_prefix, k):
+def create_hierarchy_file(event_log_path, file_prefix, metric_name, activities_column="", length=0):
+    log = Log_processing.get_log(event_log_path)
+
+    if metric_name == "Simple_Jaccard":
+        metric = Jaccard.Simple_Jaccard(log)
+        metric.perform_clustering()
+    elif metric_name == "Weighted_Jaccard":
+        metric = Jaccard.Weighted_Jaccard(log)
+        metric.perform_clustering()
+    elif metric_name == "Simple_Jaccard_N_Gram":
+        metric = Jaccard.Jaccard_N_grams(log)
+        metric.perform_clustering(length=length)
+    elif metric_name == "Weighted_Jaccard_N_Gram":
+        metric = Jaccard.Weighted_Jaccard_N_grams(log)
+        metric.perform_clustering(length=length)
+    elif metric_name == "Weighted_Role_Similarity":
+        metric = Role_Comparison.Role_Comparison(log, activities_column=activities_column)
+        metric.perform_clustering(weighted=True)
+    elif metric_name == "Simple_Role_Similarity":
+        metric = Role_Comparison.Role_Comparison(log, activities_column=activities_column)
+        metric.perform_clustering(weighted=False)
+    elif metric_name == "Label_Similarity":
+        metric = Label_Similarity.Label_Similarity(log)
+        metric.perform_clustering()
+    
+    Clustering.generate_hierarchy_file_with_dummies(metric.activities, metric.distance_matrix, metric.linkage, f"{file_prefix}_{metric_name}_hierarchy.csv")
+
+def anonymize_log(event_log_path, output_file_prefix, k, hierarchy_file_path=None):
     log = Event_log(event_log_path, output_file_prefix)
 
     print("Retrieving information from event log...")
@@ -173,14 +215,20 @@ def anonymize_log(event_log_path, output_file_prefix, k):
     log.convert_mafft_file_to_arx_output_file()
     print("--------------------------------------------------")
 
-    print("Anonymize using ARX")
-    log.run_arx(k)
+    print("Anonymize using ARX. This could take a little bit longer...")
+    log.run_arx(k, hierarchy_file=hierarchy_file_path)
     print("--------------------------------------------------")
 
-    print("Create the anonymized event log")
-    log.rewrite_traces_in_log(k=k, attribute='org:resource')
+    print("Create the anonymized event log. This could take a while...")
+    log.rewrite_traces_in_log(k)
+    print("--------------------------------------------------")
+
+    print(f"Anonymization complete. File can be found at out/{output_file_prefix}_anonymized_log_k_{k}.xes")
 # --------------------------------------------------------
 
 if __name__ == "__main__":
     log_path = "../logs/sepsis_event_log.xes"
-    anonymize_log(log_path, "sepsis", 5)
+    file_prefix = "Sepsis"
+    metric_name = "Simple_Jaccard"
+    create_hierarchy_file(log_path, file_prefix, metric_name)
+    anonymize_log(log_path, file_prefix, 5, hierarchy_file_path=f"{file_prefix}_{metric_name}_hierarchy.csv")
