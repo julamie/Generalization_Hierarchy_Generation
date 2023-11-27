@@ -128,18 +128,38 @@ class Event_log:
         print("Complete ✓")
 
     def run_arx(self, k, hierarchy_file=None):
+        """
+        Runs the ARX Anonymizing tool. Function will generate a csv file with anonymized traces which
+        are k-anonymized. k has to be known beforehand.
+
+        Output file: [prefix]_anon_k_[k].csv
+        """
+
+        # compile java file
         subprocess.run("javac -cp .:arx-3.9.1-gtk-64.jar ARXAnonymizeAttributes.java", shell=True)
+
+        # files needed are parameters for java program
         arx_file = f'out/{self.output_file_prefix}_for_arx_mafft.csv'
         if not hierarchy_file:
             hierarchy_file = f'out/{self.output_file_prefix}_hierarchy.csv'
         else:
             hierarchy_file = f'out/{hierarchy_file}'
         output_file = f'out/{self.output_file_prefix}_anon_k_{k}.csv'
+
+        # run ARX Java file
         command = f"java -cp .:arx-3.9.1-gtk-64.jar ARXAnonymizeAttributes {arx_file} {hierarchy_file} {output_file} {k}"
         subprocess.run(command, shell=True)
         print("Complete ✓")
 
     def rewrite_traces_in_log(self, k, attribute=""):
+        """
+        Combines all the k-anonymized traces to an XES file, e.g. it generates an event log file.
+        If necessary, this function also generates more files for ARX to anonymize, if you want to
+        anonymize the attributes too.
+
+        Output file: [prefix]_anonymized_log_k_[k].xes
+        """
+
         pd.set_option('mode.chained_assignment', None)
 
         privacy_log = pd.read_csv(f'out/{self.output_file_prefix}_anon_k_{k}.csv')
@@ -202,7 +222,14 @@ class Event_log:
         print("Complete ✓")
 
 # --------------------------------------------------------
+
 def create_hierarchy_file(event_log_path, file_prefix, metric_name, activities_column="", length=0):
+    """
+    Uses a given metric and generates with it a generalization hierarchy used for anonymizing a given event log.
+
+    Output file: [prefix]_[metric]_hierarchy.csv
+    """
+    
     log = Log_processing.get_log(event_log_path)
 
     if metric_name == "Simple_Jaccard":
@@ -230,6 +257,12 @@ def create_hierarchy_file(event_log_path, file_prefix, metric_name, activities_c
     Clustering.generate_hierarchy_file_with_dummies(metric.activities, metric.distance_matrix, metric.linkage, f"{file_prefix}_{metric_name}_hierarchy.csv")
 
 def anonymize_log(event_log_path, output_file_prefix, k, hierarchy_file_path=None):
+    """
+    Runs all the necessary steps used for anonymizing a given event_log.
+
+    Output file: [prefix]_anonymized_log_k_[k].xes
+    """
+
     log = Event_log(event_log_path, output_file_prefix)
 
     print("Retrieving information from event log...")
@@ -253,6 +286,7 @@ def anonymize_log(event_log_path, output_file_prefix, k, hierarchy_file_path=Non
     print("--------------------------------------------------")
 
     print(f"Anonymization complete. File can be found at out/{output_file_prefix}_anonymized_log_k_{k}.xes")
+
 # --------------------------------------------------------
 
 if __name__ == "__main__":
