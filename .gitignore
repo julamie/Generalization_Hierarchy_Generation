@@ -1,4 +1,5 @@
 __pycache__
 out
 logs/Road_Traffic_Fine_Management_Process.xes
+*.class
 .*
