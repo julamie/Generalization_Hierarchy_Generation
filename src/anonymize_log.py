@@ -8,6 +8,15 @@ import subprocess
 import Jaccard, Role_Comparison, Label_Similarity
 import Log_processing, Clustering
 
+"""
+This file combines all steps necessary for anonymizing an event log using the PMDG Framework, into one single function.
+It also generates the automatic generalization hierarchies.
+
+The original files were written by Ryan Hildebrant. 
+You can find the original project at: https://github.com/Ryanhilde/PMDG_Framework/
+
+"""
+
 class Event_log:
     def __init__(self, event_log_path, output_file_prefix):
         self.event_log_path = event_log_path
@@ -24,6 +33,13 @@ class Event_log:
         self.activities = list(pm4py.get_event_attribute_values(self.df_log, "concept:name").keys())
 
     def convert_to_mafft_output_file(self):
+        """
+        Generates a csv file where the names of the activities are changed to a letter of the alphabet.
+        This file will be used by MAFFT for the Trace Vectorization step.
+
+        Output file: [prefix].csv
+        """
+        
         # designate a letter of the alphabet to every activity
         # example: "Process Form: A, Approve Form: B, etc."
         self.dict_convert = dict(zip(self.activities, string.ascii_uppercase[:len(self.activities)]))
@@ -50,10 +66,23 @@ class Event_log:
         print("Complete ✓")
 
     def run_mafft(self):
+        """
+        Calls MAFFT to perform trace vectorization.
+
+        Output file: [prefix]_mafft.csv
+        """
+        
         subprocess.run(f"mafft --text out/{self.output_file_prefix}.csv > out/{self.output_file_prefix}_mafft.csv", shell=True)
         print("Complete ✓")
 
     def convert_mafft_file_to_arx_output_file(self):
+        """
+        Prepares event log for anonymization using ARX. This function converts the data from the MAFFT file to a csv file
+        readible by the ARX Anonymizing tool.
+
+        Output file: [prefix]_for_arx_mafft.csv
+        """
+        
         writer = []
 
         dict_convert_reverse = {y: x for x, y in self.dict_convert.items()}
