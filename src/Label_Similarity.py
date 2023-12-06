@@ -49,7 +49,7 @@ class Label_Similarity:
 
         return distances
 
-    def perform_clustering(self, verbose=False, ax=None, no_plot=False):
+    def perform_clustering(self, activity_key="concept:name", verbose=False, ax=None, no_plot=False):
         '''
         Performs all necessary steps to perform hierarchical clustering using label similarity
         and then generating a hierarchy used for abstracting the event log
@@ -57,10 +57,10 @@ class Label_Similarity:
 
         # display the dfg of the given log
         if verbose:
-            Log_processing.show_dfg_of_log(self.log)
+            Log_processing.show_dfg_of_log(self.log, activity_key=activity_key)
 
         # get all activity labels from the event log
-        self.activities = pm4py.get_event_attribute_values(self.log, "concept:name")
+        self.activities = pm4py.get_event_attribute_values(self.log, activity_key)
         self.activities = list(self.activities.keys())
         
         # generate the distance matrix between all pairs of labels
