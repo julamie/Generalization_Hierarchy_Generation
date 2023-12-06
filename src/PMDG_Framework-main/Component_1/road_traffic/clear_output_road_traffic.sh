@@ -1,1 +1,0 @@
-rm road_traffic.csv road_traffic_mafft.csv road_traffic_for_arx_mafft.csv road_traffic_for_arx_naive.csv
