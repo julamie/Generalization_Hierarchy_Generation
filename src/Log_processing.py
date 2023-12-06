@@ -51,38 +51,38 @@ def print_log_info(log, verbose=False):
 
     print(info)
 
-def show_dfg_of_log(log):
+def show_dfg_of_log(log, activity_key="concept:name"):
     '''
     Displays the directly follows graph of an event log
     '''
 
     dfg, start_activities, end_activities = pm4py.discovery.discover_dfg(log, 
                                                                          case_id_key= "case:concept:name",
-                                                                         activity_key= "concept:name")
+                                                                         activity_key= activity_key)
 
     return pm4py.vis.view_dfg(dfg, start_activities, end_activities, format="png")
 
-def get_df_from_dfg(log):
+def get_df_from_dfg(log, activity_key="concept:name"):
     '''
     Reads in the log and then produces a dfg from it. The function then generates a Pandas DataFrame.
 
     Every row in the DataFrame has a source node, a target node and the frequency of the vertex
     '''
 
-    dfg, _, _ = pm4py.discover_dfg(log)
+    dfg, _, _ = pm4py.discover_dfg(log, activity_key=activity_key)
     connections_list = [[edges[0], edges[1], weight] for edges, weight in dfg.items()] 
     df = pd.DataFrame(data=connections_list, columns=["From", "To", "Frequency"])
 
     return df
 
-def get_pivot_df_from_dfg(log):
+def get_pivot_df_from_dfg(log, activity_key="concept:name"):
     '''
     Reads in the log and then produces a dfg from it. The function then generates a Pandas DataFrame.
 
     The returned DataFrame is a pivot table, rows are source nodes, columns are target nodes and the values is the frequency the vertex has been used 
     '''
 
-    df = get_df_from_dfg(log)
+    df = get_df_from_dfg(log, activity_key=activity_key)
 
     # find events which are not in ingoing and outgoing events
     from_events = df["From"].unique()
