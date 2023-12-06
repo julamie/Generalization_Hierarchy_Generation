@@ -34,7 +34,7 @@ class Simple_Jaccard:
 
         return neighbours
 
-    def get_jaccard_distance(self, node1, node2):
+    def get_jaccard_distance(self, node1, node2, split_neighbours=False):
         """
         Determine the Jaccard similarity between the two nodes.
         """
@@ -42,24 +42,62 @@ class Simple_Jaccard:
         # skip evaluation step if the nodes are the same
         if node1 == node2:
             return 1
+        
+        # if split_neighbours is true, we calculate the Jaccard for predecessors and
+        # successors separately and use the average
+        if split_neighbours:
+            node1_preds = set(self.G.predecessors(node1))
+            node2_preds = set(self.G.predecessors(node2))
 
-        # get neighbours of node1 and node2
-        node1_neighbours = self.get_neighbours(node1)
-        node2_neighbours = self.get_neighbours(node2)
+            if len(node1_preds) == 0 or len(node2_preds) == 0:
+                return 0
+            
+            node1_preds = set(node1_preds)
+            node2_preds = set(node2_preds)
 
-        # handle edge cases where there were no paths of length n found
-        if len(node1_neighbours) == 0 or len(node2_neighbours) == 0:
-            return 0 
+            intersection_pred = node1_preds.intersection(node2_preds)
+            union_pred = node1_preds.union(node2_preds)
 
-        # convert the lists to sets
-        node1_neighbours = set(node1_neighbours)
-        node2_neighbours = set(node2_neighbours)
+            jacc_pred = len(intersection_pred) / len(union_pred)
 
-        # find the intersection and union of the sets
-        intersection = node1_neighbours.intersection(node2_neighbours)
-        union = node1_neighbours.union(node2_neighbours)
+            # ------
 
-        return len(intersection) / len(union)
+            node1_succ = set(self.G.successors(node1))
+            node2_succ = set(self.G.successors(node2))
+
+            if len(node1_succ) == 0 or len(node2_succ) == 0:
+                return 0
+            
+            node1_succ = set(node1_succ)
+            node2_succ = set(node2_succ)
+
+            intersection_succ = node1_succ.intersection(node2_succ)
+            union_succ = node1_succ.union(node2_succ)
+
+            succ_pred = len(intersection_succ) / len(union_succ)
+            # ------
+
+            return (jacc_pred + succ_pred) / 2
+        
+        # if split_neighbours is False, the combine predecessors and successors
+        else:
+            # get neighbours of node1 and node2
+            node1_neighbours = self.get_neighbours(node1)
+            node2_neighbours = self.get_neighbours(node2)
+
+            # handle edge cases where there were no paths of length n found
+            if len(node1_neighbours) == 0 or len(node2_neighbours) == 0:
+                return 0 
+
+            # convert the lists to sets
+            node1_neighbours = set(node1_neighbours)
+            node2_neighbours = set(node2_neighbours)
+
+            # find the intersection and union of the sets
+            intersection = node1_neighbours.intersection(node2_neighbours)
+            union = node1_neighbours.union(node2_neighbours)
+
+            return len(intersection) / len(union)
 
     def get_jaccard_distance_matrix(self, activities):
         """
@@ -80,23 +118,23 @@ class Simple_Jaccard:
         
         return jaccard_table
 
-    def perform_clustering(self, verbose=False, ax=None, no_plot=False):
+    def perform_clustering(self, activity_key="concept:name", verbose=False, ax=None, no_plot=False):
         '''
         Performs all necessary steps to perform hierarchical clustering using simple jaccard similarity
         and then generating a hierarchy used for abstracting the event log
         '''
         # convert event log to an undirected NetworkX graph
-        dfg, start, end = pm4py.discover_dfg(self.log)
+        dfg, start, end = pm4py.discover_dfg(self.log, activity_key=activity_key)
         edge_list = [(edge[0], edge[1], weight) for edge, weight in dfg.items()]
         self.G = nx.DiGraph()
         self.G.add_weighted_edges_from(edge_list)
 
         # display the dfg of the given log
         if verbose:
-            Log_processing.show_dfg_of_log(self.log)
+            Log_processing.show_dfg_of_log(self.log, activity_key=activity_key)
 
         # convert the log to a DataFrame 
-        self.connections_df = Log_processing.get_pivot_df_from_dfg(self.log)
+        self.connections_df = Log_processing.get_pivot_df_from_dfg(self.log, activity_key=activity_key)
         self.activities = self.connections_df.columns
 
         # generate the distance matrix
@@ -149,6 +187,15 @@ class Weighted_Jaccard:
             if x in G[node2]:
                 node2_weight = G[node2][x]['weight']
             
+            # check the other direction and change the weight to the bigger one
+            if node1 in G[x]:
+                if G[x][node1]['weight'] > node1_weight:
+                    node1_weight = G[x][node1]['weight']
+            if node2 in G[x]:
+                if G[x][node2]['weight'] > node2_weight:
+                    node2_weight = G[x][node2]['weight']
+            
+
             # sum up all the weights with minimal and maximal value
             minimums += min(node1_weight, node2_weight)
             maximums += max(node1_weight, node2_weight)
@@ -179,7 +226,7 @@ class Weighted_Jaccard:
         jaccard_table = pd.DataFrame(jaccard_table)
         return jaccard_table
 
-    def perform_clustering(self, verbose=False, ax=None, no_plot=False):
+    def perform_clustering(self, activity_key="concept:name", verbose=False, ax=None, no_plot=False):
         '''
         Performs all necessary steps to perform hierarchical clustering using weighted jaccard similarity
         and then generating a hierarchy used for abstracting the event log
@@ -187,10 +234,10 @@ class Weighted_Jaccard:
         
         # display the dfg of the given log
         if verbose:
-            Log_processing.show_dfg_of_log(self.log)
+            Log_processing.show_dfg_of_log(self.log, activity_key=activity_key)
 
         # convert the log to a DataFrame with weights between the connections between events
-        self.connections_df = Log_processing.get_pivot_df_from_dfg(self.log)
+        self.connections_df = Log_processing.get_pivot_df_from_dfg(self.log, activity_key=activity_key)
         self.connections_df = Log_processing.get_weighted_df(self.connections_df)
 
         # generate the weighted jaccard distance matrix
@@ -346,24 +393,24 @@ class Jaccard_N_grams:
         
         return jaccard_table
     
-    def perform_clustering(self, length, verbose=False, ax=None, no_plot=False):
+    def perform_clustering(self, length, activity_key="concept:name", verbose=False, ax=None, no_plot=False):
         '''
         Performs all necessary steps to perform hierarchical clustering using Jaccard with n_grams
         and then generating a hierarchy used for abstracting the event log
         '''
 
         # convert event log to an undirected NetworkX graph
-        dfg, start, end = pm4py.discover_dfg(self.log)
+        dfg, start, end = pm4py.discover_dfg(self.log, activity_key=activity_key)
         edge_list = [(edge[0], edge[1], weight) for edge, weight in dfg.items()]
         self.G = nx.DiGraph()
         self.G.add_weighted_edges_from(edge_list)
 
         # display the dfg of the given log
         if verbose:
-            Log_processing.show_dfg_of_log(self.log)
+            Log_processing.show_dfg_of_log(self.log, activity_key=activity_key)
 
         # convert the log to a DataFrame 
-        self.connections_df = Log_processing.get_pivot_df_from_dfg(self.log)
+        self.connections_df = Log_processing.get_pivot_df_from_dfg(self.log, activity_key=activity_key)
         self.activities = self.connections_df.columns
 
         # generate the distance matrix
@@ -538,24 +585,24 @@ class Weighted_Jaccard_N_grams:
         
         return jaccard_table
 
-    def perform_clustering(self, length, verbose=False, ax=None, no_plot=False):
+    def perform_clustering(self, length, activity_key="concept:name", verbose=False, ax=None, no_plot=False):
         '''
         Performs all necessary steps to perform hierarchical clustering using Weighted Jaccard with n_grams
         and then generating a hierarchy used for abstracting the event log
         '''
 
         # convert event log to an undirected NetworkX graph
-        dfg, start, end = pm4py.discover_dfg(self.log)
+        dfg, start, end = pm4py.discover_dfg(self.log, activity_key=activity_key)
         edge_list = [(edge[0], edge[1], weight) for edge, weight in dfg.items()]
         self.G = nx.DiGraph()
         self.G.add_weighted_edges_from(edge_list)
         
         # display the dfg of the given log
         if verbose:
-            Log_processing.show_dfg_of_log(self.log)
+            Log_processing.show_dfg_of_log(self.log, activity_key=activity_key)
 
         # convert the log to a DataFrame 
-        self.connections_df = Log_processing.get_pivot_df_from_dfg(self.log)
+        self.connections_df = Log_processing.get_pivot_df_from_dfg(self.log, activity_key=activity_key)
         self.connections_df = Log_processing.get_weighted_df(self.connections_df)
         self.activities = self.connections_df.columns
         
