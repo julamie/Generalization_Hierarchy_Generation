@@ -246,5 +246,5 @@ def save_and_open_handover_graph_of_log(log, resource_key, filename):
     '''
 
     handover = pm4py.discover_handover_of_work_network(log, resource_key=resource_key, timestamp_key='time:timestamp', case_id_key='case:concept:name')
-    pm4py.save_vis_sna(handover, f"../out/{filename}", variant_str=sna.Variants.HANDOVER_LOG)
-    webbrowser.open_new_tab(f"../out/{filename}")
+    pm4py.save_vis_sna(handover, f"out/{filename}", variant_str=sna.Variants.HANDOVER_LOG)
+    webbrowser.open_new_tab(f"out/{filename}")
