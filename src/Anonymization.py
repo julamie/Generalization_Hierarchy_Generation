@@ -403,8 +403,10 @@ def anonymize_log(event_log_path, output_file_prefix, k, act_hierarchy_path, att
         print("--------------------------------------------------")
 
         print(f"Anonymization complete. File can be found at out/{output_file_prefix}_anonymized_log_k_{k}_with_attributes.xes")
+        return f"out/{output_file_prefix}_anonymized_log_k_{k}_with_attributes.xes"
     else:
         print(f"Anonymization complete. File can be found at out/{output_file_prefix}_anonymized_log_k_{k}.xes")
+        return f"out/{output_file_prefix}_anonymized_log_k_{k}.xes"
 
 # --------------------------------------------------------
 
