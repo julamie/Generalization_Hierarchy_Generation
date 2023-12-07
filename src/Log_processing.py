@@ -6,7 +6,9 @@ def get_log(path):
     Reads in an event log from the logs folder using pm4py 
     '''
 
-    return pm4py.read_xes(path)
+    log = pm4py.read_xes(path)
+    log = pm4py.filter_variants_by_coverage_percentage(log, 0.001)
+    return log
 
 def get_filtered_log(path, num_top_k):
     filtered_log = get_log(path)
