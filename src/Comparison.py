@@ -191,7 +191,7 @@ def compare_dendrogram_using_mutual_info_score(metric1, metric2):
 
     return mutual_info_scores
 
-def compare_dendrogram_using_fowlkes_mallows_score(metric1, metric2):
+def compare_dendrogram_using_fowlkes_mallows_score(metric1, metric2, metric1_name, metric2_name):
     '''
     Calculates the Fowlkes-Mallows score between two clusterings for every level. Plots the result
     '''
@@ -219,12 +219,11 @@ def compare_dendrogram_using_fowlkes_mallows_score(metric1, metric2):
         fm_scores[num_clusters] = fowlkes_mallows_score(metric1_dict[num_clusters], metric2_dict[num_clusters])
 
     # plot data
-    fig = plt.figure()
-    plt.title("Fowlkes-Mallows scores per number of clusters")
+    plt.figure()
+    plt.title(f"Fowlkes-Mallows scores between {metric1_name} and {metric2_name}")
     plt.xlabel("Number of clusters")
     plt.ylabel("Fowlkes-Mallows score")
     plt.plot(list(fm_scores.keys()), list(fm_scores.values()))
-    fig.show()
 
     return fm_scores
 
