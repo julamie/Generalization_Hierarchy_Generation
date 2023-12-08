@@ -88,11 +88,15 @@ def show_role_comparison_dendrograms_for_event_log(log, activities_column, roles
     Prints the dendrograms from a given log using the role comparison distance measures, saves the generated figure in out folder
     '''
 
-    fig, ax = plt.subplots(1, figsize=(10, 5))
+    fig, ax = plt.subplots(1, 2, figsize=(15, 5))
     fig.suptitle(figure_title)
 
+    ax[0].set_title("Simple Role Comparison")
+    ax[1].set_title("Weighted Role Comparison")
+
     role_comp = Role_Comparison.Role_Comparison(log, activities_column=activities_column, roles_column=roles_column)
-    role_comp.perform_clustering(ax=ax)
+    role_comp.perform_clustering(ax=ax[0], weighted=False)
+    role_comp.perform_clustering(ax=ax[1], weighted=True)
 
     fig.tight_layout()
     plt.show()
