@@ -8,7 +8,7 @@ import pm4py
 from pm4py.algo.organizational_mining.sna import algorithm as sna
 import webbrowser
 
-def show_jaccard_dendrograms_for_event_log(log, figure_title, output_file_name):
+def show_jaccard_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name"):
     '''
     Prints the dendrograms from a given log using the Jaccard distance measures, saves the generated figure in out folder
     '''
@@ -22,14 +22,14 @@ def show_jaccard_dendrograms_for_event_log(log, figure_title, output_file_name):
     simple_jaccard = Jaccard.Simple_Jaccard(log)
     weighted_jaccard = Jaccard.Weighted_Jaccard(log)
 
-    simple_jaccard.perform_clustering(ax=ax[0])
-    weighted_jaccard.perform_clustering(ax=ax[1])
+    simple_jaccard.perform_clustering(ax=ax[0], activity_key=activity_key)
+    weighted_jaccard.perform_clustering(ax=ax[1], activity_key=activity_key)
 
     fig.tight_layout()
     plt.show()
     fig.savefig("../out/" + output_file_name)
 
-def show_simrank_dendrograms_for_event_log(log, figure_title, output_file_name):
+def show_simrank_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name"):
     '''
     Prints the dendrograms from a given log using the Simrank distance measures, saves the generated figure in out folder
     '''
@@ -43,14 +43,14 @@ def show_simrank_dendrograms_for_event_log(log, figure_title, output_file_name):
     simple_simrank = Simrank.Simple_Simrank(log)
     weighted_simrank = Simrank.Weighted_Simrank(log)
 
-    simple_simrank.perform_clustering(ax=ax[0])
-    weighted_simrank.perform_clustering(ax=ax[1])
+    simple_simrank.perform_clustering(ax=ax[0], activity_key=activity_key)
+    weighted_simrank.perform_clustering(ax=ax[1], activity_key=activity_key)
 
     fig.tight_layout()
     plt.show()
     fig.savefig("../out/" + output_file_name)
 
-def show_n_gram_dendrograms_for_event_log(log, figure_title, output_file_name):
+def show_n_gram_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name"):
     '''
     Prints the dendrograms from a given log using the N_gram Jaccard distance measures, saves the generated figure in out folder
     '''
@@ -70,14 +70,14 @@ def show_n_gram_dendrograms_for_event_log(log, figure_title, output_file_name):
     simple_n_gram = Jaccard.Jaccard_N_grams(log)
     weighted_n_gram = Jaccard.Weighted_Jaccard_N_grams(log)
 
-    simple_n_gram.perform_clustering(length=1, ax=ax[0, 0])
-    weighted_n_gram.perform_clustering(length=1, ax=ax[0, 1])
-    simple_n_gram.perform_clustering(length=2, ax=ax[1, 0])
-    weighted_n_gram.perform_clustering(length=2, ax=ax[1, 1])
-    simple_n_gram.perform_clustering(length=3, ax=ax[2, 0])
-    weighted_n_gram.perform_clustering(length=3, ax=ax[2, 1])
-    simple_n_gram.perform_clustering(length=4, ax=ax[3, 0])
-    weighted_n_gram.perform_clustering(length=4, ax=ax[3, 1])
+    simple_n_gram.perform_clustering(length=1, ax=ax[0, 0], activity_key=activity_key)
+    weighted_n_gram.perform_clustering(length=1, ax=ax[0, 1], activity_key=activity_key)
+    simple_n_gram.perform_clustering(length=2, ax=ax[1, 0], activity_key=activity_key)
+    weighted_n_gram.perform_clustering(length=2, ax=ax[1, 1], activity_key=activity_key)
+    simple_n_gram.perform_clustering(length=3, ax=ax[2, 0], activity_key=activity_key)
+    weighted_n_gram.perform_clustering(length=3, ax=ax[2, 1], activity_key=activity_key)
+    simple_n_gram.perform_clustering(length=4, ax=ax[3, 0], activity_key=activity_key)
+    weighted_n_gram.perform_clustering(length=4, ax=ax[3, 1], activity_key=activity_key)
 
     fig.tight_layout()
     plt.show()
@@ -102,7 +102,7 @@ def show_role_comparison_dendrograms_for_event_log(log, activities_column, roles
     plt.show()
     fig.savefig("../out/" + output_file_name)
 
-def show_label_similarity_dendrograms_for_event_log(log, figure_title, output_file_name):
+def show_label_similarity_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name"):
     '''
     Prints the dendrograms from a given log using the label similarity distance measures, saves the generated figure in out folder
     '''
@@ -111,7 +111,7 @@ def show_label_similarity_dendrograms_for_event_log(log, figure_title, output_fi
     fig.suptitle(figure_title)
 
     role_comp = Label_Similarity.Label_Similarity(log)
-    role_comp.perform_clustering(ax=ax)
+    role_comp.perform_clustering(ax=ax, activity_key=activity_key)
 
     fig.tight_layout()
     plt.show()
