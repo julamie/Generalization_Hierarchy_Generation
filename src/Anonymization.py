@@ -287,10 +287,10 @@ class Event_log:
 
 # --------------------------------------------------------
 
-def create_activity_hierarchy_file(event_log_path, file_prefix, metric_name, activities_column="", length=0):
+def create_activity_hierarchy_file(event_log_path, file_prefix, metric_name, roles_column="", length=0):
     """
     Uses a given metric and generates with it a generalization hierarchy used for anonymizing a given event log.
-    If Role Comparison is the metric to be used, activities_column needs to be defined
+    If Role Comparison is the metric to be used, roles_column needs to be defined
     If N_gram is the metric to be used, the maximum length to compare needs to be definined
     
     Output file: [prefix]_[metric]_hierarchy.csv
@@ -300,25 +300,25 @@ def create_activity_hierarchy_file(event_log_path, file_prefix, metric_name, act
 
     if metric_name == "Simple_Jaccard":
         metric = Jaccard.Simple_Jaccard(log)
-        metric.perform_clustering()
+        metric.perform_clustering(no_plot=True)
     elif metric_name == "Weighted_Jaccard":
         metric = Jaccard.Weighted_Jaccard(log)
-        metric.perform_clustering()
+        metric.perform_clustering(no_plot=True)
     elif metric_name == "Simple_Jaccard_N_Gram":
         metric = Jaccard.Jaccard_N_grams(log)
-        metric.perform_clustering(length=length)
+        metric.perform_clustering(length=length, no_plot=True)
     elif metric_name == "Weighted_Jaccard_N_Gram":
         metric = Jaccard.Weighted_Jaccard_N_grams(log)
-        metric.perform_clustering(length=length)
+        metric.perform_clustering(length=length, no_plot=True)
     elif metric_name == "Simple_Role_Similarity":
-        metric = Role_Comparison.Role_Comparison(log, activities_column=activities_column)
-        metric.perform_clustering(weighted=False)
+        metric = Role_Comparison.Role_Comparison(log, activities_column="concept:name", roles_column=roles_column)
+        metric.perform_clustering(weighted=False, no_plot=True)
     elif metric_name == "Weighted_Role_Similarity":
-        metric = Role_Comparison.Role_Comparison(log, activities_column=activities_column)
-        metric.perform_clustering(weighted=True)
+        metric = Role_Comparison.Role_Comparison(log, activities_column="concept:name", roles_column=roles_column)
+        metric.perform_clustering(weighted=True, no_plot=True)
     elif metric_name == "Label_Similarity":
         metric = Label_Similarity.Label_Similarity(log)
-        metric.perform_clustering()
+        metric.perform_clustering(no_plot=True)
     else:
         print(f"Incorrect metric name {metric_name}! Allowed names are: "
               "Simple_Jaccard, Weighted_Jaccard, " 
@@ -337,19 +337,19 @@ def create_attribute_hierarchy_file(event_log_path, file_prefix, attribute_key, 
 
     if metric_name == "Simple_Jaccard":
         metric = Jaccard.Simple_Jaccard(log)
-        metric.perform_clustering(activity_key=attribute_key)
+        metric.perform_clustering(activity_key=attribute_key, no_plot=True)
     elif metric_name == "Weighted_Jaccard":
         metric = Jaccard.Weighted_Jaccard(log)
-        metric.perform_clustering(activity_key=attribute_key)
+        metric.perform_clustering(activity_key=attribute_key, no_plot=True)
     elif metric_name == "Simple_Jaccard_N_Gram":
         metric = Jaccard.Jaccard_N_grams(log)
-        metric.perform_clustering(activity_key=attribute_key, length=length)
+        metric.perform_clustering(activity_key=attribute_key, length=length, no_plot=True)
     elif metric_name == "Weighted_Jaccard_N_Gram":
         metric = Jaccard.Weighted_Jaccard_N_grams(log)
-        metric.perform_clustering(activity_key=attribute_key, length=length)
+        metric.perform_clustering(activity_key=attribute_key, length=length, no_plot=True)
     elif metric_name == "Label_Similarity":
         metric = Label_Similarity.Label_Similarity(log)
-        metric.perform_clustering(activity_key=attribute_key)
+        metric.perform_clustering(activity_key=attribute_key, no_plot=True)
     else:
         print(f"Incorrect metric name {metric_name}! Allowed names are: "
               "Simple_Jaccard, Weighted_Jaccard, " 
