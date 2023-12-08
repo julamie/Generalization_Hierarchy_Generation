@@ -1,0 +1,180 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 750px;
+                 background-color: black;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+             #config {
+                 float: left;
+                 width: 400px;
+                 height: 600px;
+             }
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+            <div id="config"></div>
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "A", "label": "A", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eA Output Links: \u003c/h3\u003e\u003cbr\u003e::: A ::: * ::: {D, G, F, C, O, H, B, M, N, V, S, E, J, Q, R, K, U, L, T} ::: {D, G, F, C, O, H, B, M, N, V, S, E, A, J, Q, R, K, U, L, T} ::: C ::: B", "value": 6}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "C", "label": "C", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eC Output Links: \u003c/h3\u003e\u003cbr\u003e::: A", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "B", "label": "B", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eB Output Links: \u003c/h3\u003e\u003cbr\u003e::: {D, G, F, C, O, H, B, M, N, V, S, E, A, J, Q, R, K, U, L, T} ::: A ::: B", "value": 3}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "*", "label": "*", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e* Output Links: \u003c/h3\u003e\u003cbr\u003e::: *", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{D, G, F, C, O, H, B, M, N, V, S, E, A, J, Q, R, K, U, L, T}", "label": "{D, G, F, C, O, H, B, M, N, V, S, E, A, J, Q, R, K, U, L, T}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{D, G, F, C, O, H, B, M, N, V, S, E, A, J, Q, R, K, U, L, T} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {D, G, F, C, O, H, B, M, N, V, S, E, A, J, Q, R, K, U, L, T} ::: {D, G, F, C, O, H, B, M, N, V, S, E, J, Q, R, K, U, L, T} ::: {E, C, B, F, N}", "value": 3}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{D, G, F, C, O, H, B, M, N, V, S, E, J, Q, R, K, U, L, T}", "label": "{D, G, F, C, O, H, B, M, N, V, S, E, J, Q, R, K, U, L, T}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{D, G, F, C, O, H, B, M, N, V, S, E, J, Q, R, K, U, L, T} Output Links: \u003c/h3\u003e\u003cbr\u003e::: *", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{A_dummy}", "label": "{A_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{A_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {C_dummy} ::: A ::: {B_dummy} ::: {E, C, B, F, N} ::: {D, G, F, C, O, H, B, M, N, V, S, E, A, J, Q, R, K, U, L, T} ::: {A_dummy}", "value": 6}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{E, C, B, F, N}", "label": "{E, C, B, F, N}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{E, C, B, F, N} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {D, G, F, C, O, H, B, M, N, V, S, E, A, J, Q, R, K, U, L, T} ::: {A_dummy} ::: {E, C, B, F, N}", "value": 3}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{C_dummy}", "label": "{C_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{C_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {A_dummy} ::: A", "value": 2}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{B_dummy}", "label": "{B_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{B_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {B_dummy} ::: {A_dummy}", "value": 2}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "A", "title": 0.07054176072234764, "to": "C", "value": 0.07054176072234764}, {"arrows": "to", "from": "A", "title": 0.05304740406320542, "to": "B", "value": 0.05304740406320542}, {"arrows": "to", "from": "A", "title": 0.015237020316027089, "to": "*", "value": 0.015237020316027089}, {"arrows": "to", "from": "A", "title": 0.007336343115124154, "to": "{D, G, F, C, O, H, B, M, N, V, S, E, A, J, Q, R, K, U, L, T}", "value": 0.007336343115124154}, {"arrows": "to", "from": "A", "title": 0.011286681715575621, "to": "A", "value": 0.011286681715575621}, {"arrows": "to", "from": "A", "title": 0.0056433408577878106, "to": "{D, G, F, C, O, H, B, M, N, V, S, E, J, Q, R, K, U, L, T}", "value": 0.0056433408577878106}, {"arrows": "to", "from": "C", "title": 0.07054176072234764, "to": "A", "value": 0.07054176072234764}, {"arrows": "to", "from": "B", "title": 0.0744920993227991, "to": "B", "value": 0.0744920993227991}, {"arrows": "to", "from": "B", "title": 0.006207674943566591, "to": "{D, G, F, C, O, H, B, M, N, V, S, E, A, J, Q, R, K, U, L, T}", "value": 0.006207674943566591}, {"arrows": "to", "from": "B", "title": 0.011286681715575621, "to": "A", "value": 0.011286681715575621}, {"arrows": "to", "from": "{A_dummy}", "title": 0.05191873589164785, "to": "{E, C, B, F, N}", "value": 0.05191873589164785}, {"arrows": "to", "from": "{A_dummy}", "title": 0.029909706546275394, "to": "{D, G, F, C, O, H, B, M, N, V, S, E, A, J, Q, R, K, U, L, T}", "value": 0.029909706546275394}, {"arrows": "to", "from": "{A_dummy}", "title": 0.016930022573363433, "to": "{C_dummy}", "value": 0.016930022573363433}, {"arrows": "to", "from": "{A_dummy}", "title": 0.009593679458239277, "to": "{B_dummy}", "value": 0.009593679458239277}, {"arrows": "to", "from": "{A_dummy}", "title": 0.009593679458239277, "to": "A", "value": 0.009593679458239277}, {"arrows": "to", "from": "{A_dummy}", "title": 0.007900677200902935, "to": "{A_dummy}", "value": 0.007900677200902935}, {"arrows": "to", "from": "{E, C, B, F, N}", "title": 0.05191873589164785, "to": "{A_dummy}", "value": 0.05191873589164785}, {"arrows": "to", "from": "{E, C, B, F, N}", "title": 0.029909706546275394, "to": "{D, G, F, C, O, H, B, M, N, V, S, E, A, J, Q, R, K, U, L, T}", "value": 0.029909706546275394}, {"arrows": "to", "from": "{E, C, B, F, N}", "title": 0.007900677200902935, "to": "{E, C, B, F, N}", "value": 0.007900677200902935}, {"arrows": "to", "from": "{D, G, F, C, O, H, B, M, N, V, S, E, A, J, Q, R, K, U, L, T}", "title": 0.029909706546275394, "to": "{E, C, B, F, N}", "value": 0.029909706546275394}, {"arrows": "to", "from": "{D, G, F, C, O, H, B, M, N, V, S, E, A, J, Q, R, K, U, L, T}", "title": 0.013544018058690745, "to": "{D, G, F, C, O, H, B, M, N, V, S, E, A, J, Q, R, K, U, L, T}", "value": 0.013544018058690745}, {"arrows": "to", "from": "{D, G, F, C, O, H, B, M, N, V, S, E, A, J, Q, R, K, U, L, T}", "title": 0.007336343115124154, "to": "{D, G, F, C, O, H, B, M, N, V, S, E, J, Q, R, K, U, L, T}", "value": 0.007336343115124154}, {"arrows": "to", "from": "{C_dummy}", "title": 0.009593679458239277, "to": "{A_dummy}", "value": 0.009593679458239277}, {"arrows": "to", "from": "{C_dummy}", "title": 0.007336343115124154, "to": "A", "value": 0.007336343115124154}, {"arrows": "to", "from": "{B_dummy}", "title": 0.019187358916478554, "to": "{B_dummy}", "value": 0.019187358916478554}, {"arrows": "to", "from": "{B_dummy}", "title": 0.009593679458239277, "to": "{A_dummy}", "value": 0.009593679458239277}, {"arrows": "to", "from": "*", "title": 0.3493227990970655, "to": "*", "value": 0.3493227990970655}, {"arrows": "to", "from": "{D, G, F, C, O, H, B, M, N, V, S, E, J, Q, R, K, U, L, T}", "title": 0.012979683972911963, "to": "*", "value": 0.012979683972911963}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": true,
+        "filter": [
+            "nodes",
+            "edges",
+            "physics"
+        ]
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "barnesHut": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.3,
+            "damping": 0.09,
+            "gravitationalConstant": -80000,
+            "springConstant": 0.001,
+            "springLength": 250
+        },
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+                  // if this network requires displaying the configure window,
+                  // put it in its div
+                  options.configure["container"] = document.getElementById("config");
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

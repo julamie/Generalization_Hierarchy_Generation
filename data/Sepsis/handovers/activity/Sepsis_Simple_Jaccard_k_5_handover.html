@@ -1,0 +1,180 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 750px;
+                 background-color: black;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+             #config {
+                 float: left;
+                 width: 400px;
+                 height: 600px;
+             }
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+            <div id="config"></div>
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{ER Registration_dummy}", "label": "{ER Registration_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{ER Registration_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {ER Triage_dummy}", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{ER Triage_dummy}", "label": "{ER Triage_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{ER Triage_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {LacticAcid, Leucocytes, CRP} ::: {ER Sepsis Triage_dummy}", "value": 2}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{ER Sepsis Triage_dummy}", "label": "{ER Sepsis Triage_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{ER Sepsis Triage_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {LacticAcid, Leucocytes, CRP} ::: {IV Liquid_dummy}", "value": 2}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{LacticAcid, Leucocytes, CRP}", "label": "{LacticAcid, Leucocytes, CRP}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{LacticAcid, Leucocytes, CRP} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {ER Sepsis Triage_dummy} ::: {IV Antibiotics_dummy} ::: {LacticAcid, Leucocytes, CRP} ::: {Admission NC_dummy} ::: {IV Liquid_dummy}", "value": 5}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{IV Liquid_dummy}", "label": "{IV Liquid_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{IV Liquid_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {LacticAcid, Leucocytes, CRP} ::: {IV Antibiotics_dummy}", "value": 2}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Admission NC_dummy}", "label": "{Admission NC_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Admission NC_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {Leucocytes, CRP} ::: {Release A_dummy} ::: {ER Sepsis Triage, ER Triage, LacticAcid, CRP, Release A, IV Liquid, Leucocytes, Admission NC, IV Antibiotics}", "value": 3}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{IV Antibiotics_dummy}", "label": "{IV Antibiotics_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{IV Antibiotics_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {LacticAcid, Leucocytes, CRP} ::: {Admission NC_dummy}", "value": 2}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Leucocytes, CRP}", "label": "{Leucocytes, CRP}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Leucocytes, CRP} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {ER Sepsis Triage, ER Triage, LacticAcid, CRP, Release A, IV Liquid, Leucocytes, Admission NC, IV Antibiotics}", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{ER Sepsis Triage, ER Triage, LacticAcid, CRP, Release A, IV Liquid, Leucocytes, Admission NC, IV Antibiotics}", "label": "{ER Sepsis Triage, ER Triage, LacticAcid, CRP, Release A, IV Liquid, Leucocytes, Admission NC, IV Antibiotics}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{ER Sepsis Triage, ER Triage, LacticAcid, CRP, Release A, IV Liquid, Leucocytes, Admission NC, IV Antibiotics} Output Links: \u003c/h3\u003e\u003cbr\u003e::: *", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Release A_dummy}", "label": "{Release A_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Release A_dummy} Output Links: \u003c/h3\u003e"}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "*", "label": "*", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e* Output Links: \u003c/h3\u003e\u003cbr\u003e::: *", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "ER Registration", "label": "ER Registration", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eER Registration Output Links: \u003c/h3\u003e\u003cbr\u003e::: ER Triage", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "ER Triage", "label": "ER Triage", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eER Triage Output Links: \u003c/h3\u003e\u003cbr\u003e::: ER Sepsis Triage", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "ER Sepsis Triage", "label": "ER Sepsis Triage", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eER Sepsis Triage Output Links: \u003c/h3\u003e\u003cbr\u003e::: LacticAcid ::: CRP ::: IV Liquid ::: Leucocytes ::: Admission NC", "value": 5}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "IV Liquid", "label": "IV Liquid", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eIV Liquid Output Links: \u003c/h3\u003e\u003cbr\u003e::: Leucocytes ::: IV Antibiotics ::: CRP", "value": 3}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "Leucocytes", "label": "Leucocytes", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eLeucocytes Output Links: \u003c/h3\u003e\u003cbr\u003e::: LacticAcid ::: CRP ::: Release A ::: Leucocytes ::: IV Liquid ::: Admission NC ::: IV Antibiotics", "value": 7}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "LacticAcid", "label": "LacticAcid", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eLacticAcid Output Links: \u003c/h3\u003e\u003cbr\u003e::: CRP ::: Leucocytes ::: IV Liquid ::: Admission NC ::: IV Antibiotics", "value": 5}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "CRP", "label": "CRP", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eCRP Output Links: \u003c/h3\u003e\u003cbr\u003e::: LacticAcid ::: CRP ::: Release A ::: IV Liquid ::: Leucocytes ::: Admission NC ::: IV Antibiotics", "value": 7}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "Admission NC", "label": "Admission NC", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eAdmission NC Output Links: \u003c/h3\u003e\u003cbr\u003e::: Release B ::: CRP ::: Release A ::: Leucocytes ::: Admission NC", "value": 5}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "IV Antibiotics", "label": "IV Antibiotics", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eIV Antibiotics Output Links: \u003c/h3\u003e\u003cbr\u003e::: IV Liquid ::: Leucocytes ::: Admission NC", "value": 3}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "Release A", "label": "Release A", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eRelease A Output Links: \u003c/h3\u003e\u003cbr\u003e::: Return ER", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "Release B", "label": "Release B", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eRelease B Output Links: \u003c/h3\u003e"}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "Return ER", "label": "Return ER", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eReturn ER Output Links: \u003c/h3\u003e"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "{ER Registration_dummy}", "title": 0.12133182844243792, "to": "{ER Triage_dummy}", "value": 0.12133182844243792}, {"arrows": "to", "from": "{ER Triage_dummy}", "title": 0.11117381489841986, "to": "{ER Sepsis Triage_dummy}", "value": 0.11117381489841986}, {"arrows": "to", "from": "{ER Triage_dummy}", "title": 0.010158013544018058, "to": "{LacticAcid, Leucocytes, CRP}", "value": 0.010158013544018058}, {"arrows": "to", "from": "{ER Sepsis Triage_dummy}", "title": 0.08295711060948081, "to": "{LacticAcid, Leucocytes, CRP}", "value": 0.08295711060948081}, {"arrows": "to", "from": "{ER Sepsis Triage_dummy}", "title": 0.013544018058690745, "to": "{IV Liquid_dummy}", "value": 0.013544018058690745}, {"arrows": "to", "from": "{LacticAcid, Leucocytes, CRP}", "title": 0.1670428893905192, "to": "{LacticAcid, Leucocytes, CRP}", "value": 0.1670428893905192}, {"arrows": "to", "from": "{LacticAcid, Leucocytes, CRP}", "title": 0.041196388261851014, "to": "{IV Liquid_dummy}", "value": 0.041196388261851014}, {"arrows": "to", "from": "{LacticAcid, Leucocytes, CRP}", "title": 0.010158013544018058, "to": "{ER Sepsis Triage_dummy}", "value": 0.010158013544018058}, {"arrows": "to", "from": "{LacticAcid, Leucocytes, CRP}", "title": 0.005079006772009029, "to": "{Admission NC_dummy}", "value": 0.005079006772009029}, {"arrows": "to", "from": "{LacticAcid, Leucocytes, CRP}", "title": 0.003386004514672686, "to": "{IV Antibiotics_dummy}", "value": 0.003386004514672686}, {"arrows": "to", "from": "{IV Liquid_dummy}", "title": 0.051354401805869074, "to": "{IV Antibiotics_dummy}", "value": 0.051354401805869074}, {"arrows": "to", "from": "{IV Liquid_dummy}", "title": 0.003386004514672686, "to": "{LacticAcid, Leucocytes, CRP}", "value": 0.003386004514672686}, {"arrows": "to", "from": "{IV Antibiotics_dummy}", "title": 0.01805869074492099, "to": "{Admission NC_dummy}", "value": 0.01805869074492099}, {"arrows": "to", "from": "{IV Antibiotics_dummy}", "title": 0.005079006772009029, "to": "{LacticAcid, Leucocytes, CRP}", "value": 0.005079006772009029}, {"arrows": "to", "from": "{Admission NC_dummy}", "title": 0.005079006772009029, "to": "{Leucocytes, CRP}", "value": 0.005079006772009029}, {"arrows": "to", "from": "{Admission NC_dummy}", "title": 0.012979683972911963, "to": "{ER Sepsis Triage, ER Triage, LacticAcid, CRP, Release A, IV Liquid, Leucocytes, Admission NC, IV Antibiotics}", "value": 0.012979683972911963}, {"arrows": "to", "from": "{Admission NC_dummy}", "title": 0.005079006772009029, "to": "{Release A_dummy}", "value": 0.005079006772009029}, {"arrows": "to", "from": "{Leucocytes, CRP}", "title": 0.005079006772009029, "to": "{ER Sepsis Triage, ER Triage, LacticAcid, CRP, Release A, IV Liquid, Leucocytes, Admission NC, IV Antibiotics}", "value": 0.005079006772009029}, {"arrows": "to", "from": "{ER Sepsis Triage, ER Triage, LacticAcid, CRP, Release A, IV Liquid, Leucocytes, Admission NC, IV Antibiotics}", "title": 0.012979683972911963, "to": "*", "value": 0.012979683972911963}, {"arrows": "to", "from": "*", "title": 0.014672686230248307, "to": "*", "value": 0.014672686230248307}, {"arrows": "to", "from": "ER Registration", "title": 0.02878103837471783, "to": "ER Triage", "value": 0.02878103837471783}, {"arrows": "to", "from": "ER Triage", "title": 0.02878103837471783, "to": "ER Sepsis Triage", "value": 0.02878103837471783}, {"arrows": "to", "from": "ER Sepsis Triage", "title": 0.007336343115124154, "to": "IV Liquid", "value": 0.007336343115124154}, {"arrows": "to", "from": "ER Sepsis Triage", "title": 0.014672686230248307, "to": "Leucocytes", "value": 0.014672686230248307}, {"arrows": "to", "from": "ER Sepsis Triage", "title": 0.002257336343115124, "to": "LacticAcid", "value": 0.002257336343115124}, {"arrows": "to", "from": "ER Sepsis Triage", "title": 0.003386004514672686, "to": "CRP", "value": 0.003386004514672686}, {"arrows": "to", "from": "ER Sepsis Triage", "title": 0.001128668171557562, "to": "Admission NC", "value": 0.001128668171557562}, {"arrows": "to", "from": "IV Liquid", "title": 0.003386004514672686, "to": "Leucocytes", "value": 0.003386004514672686}, {"arrows": "to", "from": "IV Liquid", "title": 0.01636568848758465, "to": "IV Antibiotics", "value": 0.01636568848758465}, {"arrows": "to", "from": "IV Liquid", "title": 0.001128668171557562, "to": "CRP", "value": 0.001128668171557562}, {"arrows": "to", "from": "Leucocytes", "title": 0.0056433408577878106, "to": "LacticAcid", "value": 0.0056433408577878106}, {"arrows": "to", "from": "Leucocytes", "title": 0.035553047404063204, "to": "CRP", "value": 0.035553047404063204}, {"arrows": "to", "from": "Leucocytes", "title": 0.004514672686230248, "to": "Release A", "value": 0.004514672686230248}, {"arrows": "to", "from": "Leucocytes", "title": 0.002257336343115124, "to": "Admission NC", "value": 0.002257336343115124}, {"arrows": "to", "from": "Leucocytes", "title": 0.001128668171557562, "to": "Leucocytes", "value": 0.001128668171557562}, {"arrows": "to", "from": "Leucocytes", "title": 0.001128668171557562, "to": "IV Antibiotics", "value": 0.001128668171557562}, {"arrows": "to", "from": "Leucocytes", "title": 0.003386004514672686, "to": "IV Liquid", "value": 0.003386004514672686}, {"arrows": "to", "from": "LacticAcid", "title": 0.006772009029345372, "to": "CRP", "value": 0.006772009029345372}, {"arrows": "to", "from": "LacticAcid", "title": 0.001693002257336343, "to": "IV Antibiotics", "value": 0.001693002257336343}, {"arrows": "to", "from": "LacticAcid", "title": 0.007900677200902935, "to": "IV Liquid", "value": 0.007900677200902935}, {"arrows": "to", "from": "LacticAcid", "title": 0.002257336343115124, "to": "Admission NC", "value": 0.002257336343115124}, {"arrows": "to", "from": "LacticAcid", "title": 0.0056433408577878106, "to": "Leucocytes", "value": 0.0056433408577878106}, {"arrows": "to", "from": "CRP", "title": 0.0039503386004514675, "to": "IV Antibiotics", "value": 0.0039503386004514675}, {"arrows": "to", "from": "CRP", "title": 0.01636568848758465, "to": "LacticAcid", "value": 0.01636568848758465}, {"arrows": "to", "from": "CRP", "title": 0.013544018058690745, "to": "Release A", "value": 0.013544018058690745}, {"arrows": "to", "from": "CRP", "title": 0.005079006772009029, "to": "Admission NC", "value": 0.005079006772009029}, {"arrows": "to", "from": "CRP", "title": 0.002257336343115124, "to": "IV Liquid", "value": 0.002257336343115124}, {"arrows": "to", "from": "CRP", "title": 0.001128668171557562, "to": "CRP", "value": 0.001128668171557562}, {"arrows": "to", "from": "CRP", "title": 0.010158013544018058, "to": "Leucocytes", "value": 0.010158013544018058}, {"arrows": "to", "from": "IV Antibiotics", "title": 0.01805869074492099, "to": "Admission NC", "value": 0.01805869074492099}, {"arrows": "to", "from": "IV Antibiotics", "title": 0.0028216704288939053, "to": "Leucocytes", "value": 0.0028216704288939053}, {"arrows": "to", "from": "IV Antibiotics", "title": 0.001128668171557562, "to": "IV Liquid", "value": 0.001128668171557562}, {"arrows": "to", "from": "Admission NC", "title": 0.01580135440180587, "to": "Leucocytes", "value": 0.01580135440180587}, {"arrows": "to", "from": "Admission NC", "title": 0.004514672686230248, "to": "Release A", "value": 0.004514672686230248}, {"arrows": "to", "from": "Admission NC", "title": 0.004514672686230248, "to": "CRP", "value": 0.004514672686230248}, {"arrows": "to", "from": "Admission NC", "title": 0.002257336343115124, "to": "Admission NC", "value": 0.002257336343115124}, {"arrows": "to", "from": "Admission NC", "title": 0.001128668171557562, "to": "Release B", "value": 0.001128668171557562}, {"arrows": "to", "from": "Release A", "title": 0.012415349887133182, "to": "Return ER", "value": 0.012415349887133182}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": true,
+        "filter": [
+            "nodes",
+            "edges",
+            "physics"
+        ]
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "barnesHut": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.3,
+            "damping": 0.09,
+            "gravitationalConstant": -80000,
+            "springConstant": 0.001,
+            "springLength": 250
+        },
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+                  // if this network requires displaying the configure window,
+                  // put it in its div
+                  options.configure["container"] = document.getElementById("config");
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

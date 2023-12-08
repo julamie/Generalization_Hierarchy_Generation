@@ -1,0 +1,23 @@
+?;{?_dummy};{?_dummy};{?_dummy};{?_dummy};{?_dummy};{?_dummy};{?_dummy};{?_dummy};{?_dummy};*
+A;{A_dummy};{A_dummy};{A_dummy};{A_dummy};{A_dummy};{B, A};{E, A, B};{U, I, E, Q, F, B, J, R, L, V, O, H, M, A};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+B;{B_dummy};{B_dummy};{B_dummy};{B_dummy};{B_dummy};{B, A};{E, A, B};{U, I, E, Q, F, B, J, R, L, V, O, H, M, A};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+C;{C_dummy};{C_dummy};{C_dummy};{C_dummy};{C_dummy};{C_dummy};{C_dummy};{G, S, K, C, T, D, N};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+D;{D_dummy};{D_dummy};{K, D};{S, D, K};{S, T, D, K};{S, K, T, D, N};{G, S, K, T, D, N};{G, S, K, C, T, D, N};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+E;{E_dummy};{E_dummy};{E_dummy};{E_dummy};{E_dummy};{E_dummy};{E, A, B};{U, I, E, Q, F, B, J, R, L, V, O, H, M, A};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+F;{F_dummy};{F_dummy};{F_dummy};{F, O};{U, I, Q, F, J, R, O, H, M};{U, I, Q, F, J, R, V, O, H, M};{U, I, Q, F, J, R, L, V, O, H, M};{U, I, E, Q, F, B, J, R, L, V, O, H, M, A};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+G;{G_dummy};{G_dummy};{G_dummy};{G_dummy};{G_dummy};{G_dummy};{G, S, K, T, D, N};{G, S, K, C, T, D, N};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+H;{H_dummy};{H, M};{U, H, M};{U, I, H, Q, M, J, R};{U, I, Q, F, J, R, O, H, M};{U, I, Q, F, J, R, V, O, H, M};{U, I, Q, F, J, R, L, V, O, H, M};{U, I, E, Q, F, B, J, R, L, V, O, H, M, A};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+I;{I_dummy};{I, R, Q};{I, J, R, Q};{U, I, H, Q, M, J, R};{U, I, Q, F, J, R, O, H, M};{U, I, Q, F, J, R, V, O, H, M};{U, I, Q, F, J, R, L, V, O, H, M};{U, I, E, Q, F, B, J, R, L, V, O, H, M, A};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+J;{J_dummy};{J_dummy};{I, J, R, Q};{U, I, H, Q, M, J, R};{U, I, Q, F, J, R, O, H, M};{U, I, Q, F, J, R, V, O, H, M};{U, I, Q, F, J, R, L, V, O, H, M};{U, I, E, Q, F, B, J, R, L, V, O, H, M, A};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+K;{K_dummy};{K_dummy};{K, D};{S, D, K};{S, T, D, K};{S, K, T, D, N};{G, S, K, T, D, N};{G, S, K, C, T, D, N};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+L;{L_dummy};{L_dummy};{L_dummy};{L_dummy};{L_dummy};{L_dummy};{U, I, Q, F, J, R, L, V, O, H, M};{U, I, E, Q, F, B, J, R, L, V, O, H, M, A};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+M;{M_dummy};{H, M};{U, H, M};{U, I, H, Q, M, J, R};{U, I, Q, F, J, R, O, H, M};{U, I, Q, F, J, R, V, O, H, M};{U, I, Q, F, J, R, L, V, O, H, M};{U, I, E, Q, F, B, J, R, L, V, O, H, M, A};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+N;{N_dummy};{N_dummy};{N_dummy};{N_dummy};{N_dummy};{S, K, T, D, N};{G, S, K, T, D, N};{G, S, K, C, T, D, N};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+O;{O_dummy};{O_dummy};{O_dummy};{F, O};{U, I, Q, F, J, R, O, H, M};{U, I, Q, F, J, R, V, O, H, M};{U, I, Q, F, J, R, L, V, O, H, M};{U, I, E, Q, F, B, J, R, L, V, O, H, M, A};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+Q;{R, Q};{I, R, Q};{I, J, R, Q};{U, I, H, Q, M, J, R};{U, I, Q, F, J, R, O, H, M};{U, I, Q, F, J, R, V, O, H, M};{U, I, Q, F, J, R, L, V, O, H, M};{U, I, E, Q, F, B, J, R, L, V, O, H, M, A};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+R;{R, Q};{I, R, Q};{I, J, R, Q};{U, I, H, Q, M, J, R};{U, I, Q, F, J, R, O, H, M};{U, I, Q, F, J, R, V, O, H, M};{U, I, Q, F, J, R, L, V, O, H, M};{U, I, E, Q, F, B, J, R, L, V, O, H, M, A};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+S;{S_dummy};{S_dummy};{S_dummy};{S, D, K};{S, T, D, K};{S, K, T, D, N};{G, S, K, T, D, N};{G, S, K, C, T, D, N};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+T;{T_dummy};{T_dummy};{T_dummy};{T_dummy};{S, T, D, K};{S, K, T, D, N};{G, S, K, T, D, N};{G, S, K, C, T, D, N};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+U;{U_dummy};{U_dummy};{U, H, M};{U, I, H, Q, M, J, R};{U, I, Q, F, J, R, O, H, M};{U, I, Q, F, J, R, V, O, H, M};{U, I, Q, F, J, R, L, V, O, H, M};{U, I, E, Q, F, B, J, R, L, V, O, H, M, A};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+V;{V_dummy};{V_dummy};{V_dummy};{V_dummy};{V_dummy};{U, I, Q, F, J, R, V, O, H, M};{U, I, Q, F, J, R, L, V, O, H, M};{U, I, E, Q, F, B, J, R, L, V, O, H, M, A};{K, I, C, Q, L, N, V, O, S, H, M, T, A, U, E, F, B, J, R, G, D};*
+-;-;-;-;-;-;-;-;-;-;-

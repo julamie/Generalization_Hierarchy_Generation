@@ -1,0 +1,180 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 750px;
+                 background-color: black;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+             #config {
+                 float: left;
+                 width: 400px;
+                 height: 600px;
+             }
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+            <div id="config"></div>
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "A", "label": "A", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eA Output Links: \u003c/h3\u003e\u003cbr\u003e::: C ::: A ::: {D, S, F, G, I, Q, J, R, K, B, O, H, M, U, N, T} ::: B", "value": 4}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "C", "label": "C", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eC Output Links: \u003c/h3\u003e\u003cbr\u003e::: {L, A} ::: {A_dummy} ::: A ::: B", "value": 4}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "B", "label": "B", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eB Output Links: \u003c/h3\u003e\u003cbr\u003e::: {E_dummy} ::: {D, F, G, I, B, O, H, M, N, S, A, J, Q, R, K, U, L, T} ::: A ::: {B_dummy} ::: {A_dummy} ::: B", "value": 6}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{D, S, F, G, I, Q, J, R, K, B, O, H, M, U, N, T}", "label": "{D, S, F, G, I, Q, J, R, K, B, O, H, M, U, N, T}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{D, S, F, G, I, Q, J, R, K, B, O, H, M, U, N, T} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {D, F, G, I, B, O, H, M, N, S, A, J, Q, R, K, U, L, T} ::: * ::: B", "value": 3}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{L, A}", "label": "{L, A}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{L, A} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {L, A} ::: {C_dummy} ::: {D, S, F, G, I, Q, J, R, K, B, O, H, M, U, N, T} ::: {D, F, G, I, B, O, H, M, N, S, A, J, Q, R, K, U, L, T} ::: {B_dummy} ::: C ::: {A_dummy} ::: B ::: {D, F, G, I, B, O, H, M, N, V, S, A, J, Q, R, K, U, L, T}", "value": 9}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{A_dummy}", "label": "{A_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{A_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {C_dummy} ::: {D, S, F, G, I, Q, J, R, K, B, O, H, M, U, N, T} ::: {D, F, G, I, B, O, H, M, N, S, A, J, Q, R, K, U, L, T} ::: {B_dummy} ::: C ::: {A_dummy}", "value": 6}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{B_dummy}", "label": "{B_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{B_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {L, A} ::: {E_dummy} ::: {D, S, F, G, I, Q, J, R, K, B, O, H, M, U, N, T} ::: {D, F, G, I, B, O, H, M, N, S, A, J, Q, R, K, U, L, T} ::: {B_dummy} ::: B ::: {D, F, G, I, B, O, H, M, N, V, S, A, J, Q, R, K, U, L, T}", "value": 7}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{D, F, G, I, B, O, H, M, N, S, A, J, Q, R, K, U, L, T}", "label": "{D, F, G, I, B, O, H, M, N, S, A, J, Q, R, K, U, L, T}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{D, F, G, I, B, O, H, M, N, S, A, J, Q, R, K, U, L, T} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {B_dummy} ::: * ::: {D, S, F, G, I, Q, J, R, K, B, O, H, M, U, N, T}", "value": 3}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{E_dummy}", "label": "{E_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{E_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {?_dummy}", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{C_dummy}", "label": "{C_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{C_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {L, A} ::: {A_dummy}", "value": 2}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{D, F, G, I, B, O, H, M, N, V, S, A, J, Q, R, K, U, L, T}", "label": "{D, F, G, I, B, O, H, M, N, V, S, A, J, Q, R, K, U, L, T}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{D, F, G, I, B, O, H, M, N, V, S, A, J, Q, R, K, U, L, T} Output Links: \u003c/h3\u003e\u003cbr\u003e::: *", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "*", "label": "*", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e* Output Links: \u003c/h3\u003e\u003cbr\u003e::: *", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{?_dummy}", "label": "{?_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{?_dummy} Output Links: \u003c/h3\u003e"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "A", "title": 0.06715575620767494, "to": "C", "value": 0.06715575620767494}, {"arrows": "to", "from": "A", "title": 0.05869074492099323, "to": "B", "value": 0.05869074492099323}, {"arrows": "to", "from": "A", "title": 0.04740406320541761, "to": "A", "value": 0.04740406320541761}, {"arrows": "to", "from": "A", "title": 0.003386004514672686, "to": "{D, S, F, G, I, Q, J, R, K, B, O, H, M, U, N, T}", "value": 0.003386004514672686}, {"arrows": "to", "from": "C", "title": 0.05869074492099323, "to": "A", "value": 0.05869074492099323}, {"arrows": "to", "from": "C", "title": 0.02708803611738149, "to": "{L, A}", "value": 0.02708803611738149}, {"arrows": "to", "from": "C", "title": 0.008465011286681716, "to": "B", "value": 0.008465011286681716}, {"arrows": "to", "from": "C", "title": 0.0039503386004514675, "to": "{A_dummy}", "value": 0.0039503386004514675}, {"arrows": "to", "from": "B", "title": 0.11230248306997742, "to": "B", "value": 0.11230248306997742}, {"arrows": "to", "from": "B", "title": 0.03668171557562077, "to": "A", "value": 0.03668171557562077}, {"arrows": "to", "from": "B", "title": 0.007900677200902935, "to": "{B_dummy}", "value": 0.007900677200902935}, {"arrows": "to", "from": "B", "title": 0.007336343115124154, "to": "{D, F, G, I, B, O, H, M, N, S, A, J, Q, R, K, U, L, T}", "value": 0.007336343115124154}, {"arrows": "to", "from": "B", "title": 0.0056433408577878106, "to": "{A_dummy}", "value": 0.0056433408577878106}, {"arrows": "to", "from": "B", "title": 0.0028216704288939053, "to": "{E_dummy}", "value": 0.0028216704288939053}, {"arrows": "to", "from": "{L, A}", "title": 0.02708803611738149, "to": "C", "value": 0.02708803611738149}, {"arrows": "to", "from": "{L, A}", "title": 0.035553047404063204, "to": "{C_dummy}", "value": 0.035553047404063204}, {"arrows": "to", "from": "{L, A}", "title": 0.03216704288939052, "to": "{B_dummy}", "value": 0.03216704288939052}, {"arrows": "to", "from": "{L, A}", "title": 0.016930022573363433, "to": "{L, A}", "value": 0.016930022573363433}, {"arrows": "to", "from": "{L, A}", "title": 0.01072234762979684, "to": "{D, S, F, G, I, Q, J, R, K, B, O, H, M, U, N, T}", "value": 0.01072234762979684}, {"arrows": "to", "from": "{L, A}", "title": 0.007336343115124154, "to": "B", "value": 0.007336343115124154}, {"arrows": "to", "from": "{L, A}", "title": 0.006207674943566591, "to": "{D, F, G, I, B, O, H, M, N, V, S, A, J, Q, R, K, U, L, T}", "value": 0.006207674943566591}, {"arrows": "to", "from": "{L, A}", "title": 0.004514672686230248, "to": "{D, F, G, I, B, O, H, M, N, S, A, J, Q, R, K, U, L, T}", "value": 0.004514672686230248}, {"arrows": "to", "from": "{L, A}", "title": 0.003386004514672686, "to": "{A_dummy}", "value": 0.003386004514672686}, {"arrows": "to", "from": "{C_dummy}", "title": 0.035553047404063204, "to": "{L, A}", "value": 0.035553047404063204}, {"arrows": "to", "from": "{C_dummy}", "title": 0.0056433408577878106, "to": "{A_dummy}", "value": 0.0056433408577878106}, {"arrows": "to", "from": "{B_dummy}", "title": 0.06489841986455983, "to": "{B_dummy}", "value": 0.06489841986455983}, {"arrows": "to", "from": "{B_dummy}", "title": 0.02144469525959368, "to": "{L, A}", "value": 0.02144469525959368}, {"arrows": "to", "from": "{B_dummy}", "title": 0.007900677200902935, "to": "{E_dummy}", "value": 0.007900677200902935}, {"arrows": "to", "from": "{B_dummy}", "title": 0.0056433408577878106, "to": "B", "value": 0.0056433408577878106}, {"arrows": "to", "from": "{B_dummy}", "title": 0.004514672686230248, "to": "{D, F, G, I, B, O, H, M, N, S, A, J, Q, R, K, U, L, T}", "value": 0.004514672686230248}, {"arrows": "to", "from": "{B_dummy}", "title": 0.0039503386004514675, "to": "{D, F, G, I, B, O, H, M, N, V, S, A, J, Q, R, K, U, L, T}", "value": 0.0039503386004514675}, {"arrows": "to", "from": "{B_dummy}", "title": 0.003386004514672686, "to": "{D, S, F, G, I, Q, J, R, K, B, O, H, M, U, N, T}", "value": 0.003386004514672686}, {"arrows": "to", "from": "{D, S, F, G, I, Q, J, R, K, B, O, H, M, U, N, T}", "title": 0.01072234762979684, "to": "B", "value": 0.01072234762979684}, {"arrows": "to", "from": "{D, S, F, G, I, Q, J, R, K, B, O, H, M, U, N, T}", "title": 0.016930022573363433, "to": "*", "value": 0.016930022573363433}, {"arrows": "to", "from": "{D, S, F, G, I, Q, J, R, K, B, O, H, M, U, N, T}", "title": 0.003386004514672686, "to": "{D, F, G, I, B, O, H, M, N, S, A, J, Q, R, K, U, L, T}", "value": 0.003386004514672686}, {"arrows": "to", "from": "{D, F, G, I, B, O, H, M, N, S, A, J, Q, R, K, U, L, T}", "title": 0.007336343115124154, "to": "*", "value": 0.007336343115124154}, {"arrows": "to", "from": "{D, F, G, I, B, O, H, M, N, S, A, J, Q, R, K, U, L, T}", "title": 0.011851015801354402, "to": "{B_dummy}", "value": 0.011851015801354402}, {"arrows": "to", "from": "{D, F, G, I, B, O, H, M, N, S, A, J, Q, R, K, U, L, T}", "title": 0.007900677200902935, "to": "{D, S, F, G, I, Q, J, R, K, B, O, H, M, U, N, T}", "value": 0.007900677200902935}, {"arrows": "to", "from": "{D, F, G, I, B, O, H, M, N, V, S, A, J, Q, R, K, U, L, T}", "title": 0.010158013544018058, "to": "*", "value": 0.010158013544018058}, {"arrows": "to", "from": "{A_dummy}", "title": 0.0056433408577878106, "to": "{C_dummy}", "value": 0.0056433408577878106}, {"arrows": "to", "from": "{A_dummy}", "title": 0.0056433408577878106, "to": "{B_dummy}", "value": 0.0056433408577878106}, {"arrows": "to", "from": "{A_dummy}", "title": 0.0056433408577878106, "to": "{A_dummy}", "value": 0.0056433408577878106}, {"arrows": "to", "from": "{A_dummy}", "title": 0.0056433408577878106, "to": "{D, S, F, G, I, Q, J, R, K, B, O, H, M, U, N, T}", "value": 0.0056433408577878106}, {"arrows": "to", "from": "{A_dummy}", "title": 0.0039503386004514675, "to": "C", "value": 0.0039503386004514675}, {"arrows": "to", "from": "{A_dummy}", "title": 0.007336343115124154, "to": "{D, F, G, I, B, O, H, M, N, S, A, J, Q, R, K, U, L, T}", "value": 0.007336343115124154}, {"arrows": "to", "from": "*", "title": 0.15067720090293454, "to": "*", "value": 0.15067720090293454}, {"arrows": "to", "from": "{E_dummy}", "title": 0.0028216704288939053, "to": "{?_dummy}", "value": 0.0028216704288939053}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": true,
+        "filter": [
+            "nodes",
+            "edges",
+            "physics"
+        ]
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "barnesHut": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.3,
+            "damping": 0.09,
+            "gravitationalConstant": -80000,
+            "springConstant": 0.001,
+            "springLength": 250
+        },
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+                  // if this network requires displaying the configure window,
+                  // put it in its div
+                  options.configure["container"] = document.getElementById("config");
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
