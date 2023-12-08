@@ -17,7 +17,7 @@ class Simple_Simrank:
         self.clusterings = None
         self.hierarchies = None
 
-    def get_simrank_distance_of_dfg(self):
+    def get_simrank_distance_of_dfg(self, activity_key="concept:name"):
         '''
         Computes the simrank similarity of two nodes using the DFG
 
@@ -27,7 +27,7 @@ class Simple_Simrank:
         '''
 
         # convert event log to a NetworkX graph
-        dfg, start, end = pm4py.discover_dfg(self.log)
+        dfg, start, end = pm4py.discover_dfg(self.log, activity_key=activity_key)
         edge_list = [(edge[0], edge[1], weight) for edge, weight in dfg.items()]
         dg = nx.DiGraph()
         dg.add_weighted_edges_from(edge_list)
@@ -55,7 +55,7 @@ class Simple_Simrank:
         # return only the values of the matrix, not the names of the activities
         return activities, distance_matrix
 
-    def perform_clustering(self, verbose=False, ax=None, no_plot=False):
+    def perform_clustering(self, activity_key="concept:name", verbose=False, ax=None, no_plot=False):
         '''
         Performs all necessary steps to perform hierarchical clustering using simple simrank similarity
         and then generates a hierarchy used for abstracting the event log
@@ -63,10 +63,10 @@ class Simple_Simrank:
 
         # display the dfg of the given log
         if verbose:
-            Log_processing.show_dfg_of_log(self.log)
+            Log_processing.show_dfg_of_log(self.log, activity_key=activity_key)
         
         # generate a distance matrix using the directly follows graph of the events
-        self.pairwise_distances = self.get_simrank_distance_of_dfg()
+        self.pairwise_distances = self.get_simrank_distance_of_dfg(activity_key=activity_key)
         self.activities, self.distance_matrix = self.convert_distances_to_distance_matrix(self.pairwise_distances)
         
         # print the distances between events
@@ -96,7 +96,7 @@ class Weighted_Simrank:
         self.clusterings = None
         self.hierarchies = None
 
-    def perform_clustering(self, verbose=False, ax=None, no_plot=False):
+    def perform_clustering(self, activity_key="concept:name", verbose=False, ax=None, no_plot=False):
         '''
         Performs all necessary steps to perform hierarchical clustering using weighted simrank similarity
         and then generates a hierarchy used for abstracting the event log
@@ -104,10 +104,10 @@ class Weighted_Simrank:
 
         # display the dfg of the given log
         if verbose:
-            Log_processing.show_dfg_of_log(self.log)
+            Log_processing.show_dfg_of_log(self.log, activity_key=activity_key)
 
         # convert the log to a DataFrame with weights between the connections between events
-        self.connections_df = Log_processing.get_df_from_dfg(self.log)
+        self.connections_df = Log_processing.get_df_from_dfg(self.log, activity_key=activity_key)
 
         # use external Simrank file to compute the weighted simrank distances
         sr = SimRank_external.SimRank()
