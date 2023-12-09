@@ -99,7 +99,7 @@ class Simple_Jaccard:
 
             return len(intersection) / len(union)
 
-    def get_jaccard_distance_matrix(self, activities):
+    def get_jaccard_distance_matrix(self, activities, split_neighbours=False):
         """
         Computes the Jaccard distance between all pairs of labels and converts them to a distance matrix
         """
@@ -110,7 +110,7 @@ class Simple_Jaccard:
         for node1 in activities:
             node1_distances = {}
             for node2 in activities:
-                similarity = self.get_jaccard_distance(node1, node2)
+                similarity = self.get_jaccard_distance(node1, node2, split_neighbours=split_neighbours)
                 node1_distances[node2] = round(1 - similarity, 6)
             jaccard_table[node1] = node1_distances
 
@@ -118,7 +118,7 @@ class Simple_Jaccard:
         
         return jaccard_table
 
-    def perform_clustering(self, activity_key="concept:name", verbose=False, ax=None, no_plot=False):
+    def perform_clustering(self, activity_key="concept:name", verbose=False, ax=None, no_plot=False, split_neighbours=False):
         '''
         Performs all necessary steps to perform hierarchical clustering using simple jaccard similarity
         and then generating a hierarchy used for abstracting the event log
@@ -138,7 +138,7 @@ class Simple_Jaccard:
         self.activities = self.connections_df.columns
 
         # generate the distance matrix
-        self.distance_matrix = self.get_jaccard_distance_matrix(self.activities)
+        self.distance_matrix = self.get_jaccard_distance_matrix(self.activities, split_neighbours=split_neighbours)
 
         # print the distances between events
         if verbose:
