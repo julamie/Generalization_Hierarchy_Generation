@@ -8,33 +8,36 @@ import pm4py
 from pm4py.algo.organizational_mining.sna import algorithm as sna
 import webbrowser
 
-def show_jaccard_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name"):
+def show_jaccard_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name", figsize=(20, 5)):
     '''
     Prints the dendrograms from a given log using the Jaccard distance measures, saves the generated figure in out folder
     '''
 
-    fig, ax = plt.subplots(1, 2, figsize=(15, 5))
+    fig, ax = plt.subplots(1, 3, figsize=figsize)
     fig.suptitle(figure_title)
 
     ax[0].set_title("Simple Jaccard")
-    ax[1].set_title("Weighted Jaccard")
+    ax[1].set_title("Split simple Jaccard")
+    ax[2].set_title("Weighted Jaccard")
 
     simple_jaccard = Jaccard.Simple_Jaccard(log)
+    simple_jaccard_split = Jaccard.Simple_Jaccard(log)
     weighted_jaccard = Jaccard.Weighted_Jaccard(log)
 
     simple_jaccard.perform_clustering(ax=ax[0], activity_key=activity_key)
-    weighted_jaccard.perform_clustering(ax=ax[1], activity_key=activity_key)
+    simple_jaccard_split.perform_clustering(ax=ax[1], activity_key=activity_key, split_neighbours=True)
+    weighted_jaccard.perform_clustering(ax=ax[2], activity_key=activity_key)
 
     fig.tight_layout()
     plt.show()
     fig.savefig("../out/" + output_file_name)
 
-def show_simrank_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name"):
+def show_simrank_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name", figsize=(15,5)):
     '''
     Prints the dendrograms from a given log using the Simrank distance measures, saves the generated figure in out folder
     '''
 
-    fig, ax = plt.subplots(1, 2, figsize=(15, 5))
+    fig, ax = plt.subplots(1, 2, figsize=figsize)
     fig.suptitle(figure_title)
 
     ax[0].set_title("Simple Simrank")
@@ -50,12 +53,12 @@ def show_simrank_dendrograms_for_event_log(log, figure_title, output_file_name, 
     plt.show()
     fig.savefig("../out/" + output_file_name)
 
-def show_n_gram_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name"):
+def show_n_gram_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name", figsize=(15,15)):
     '''
     Prints the dendrograms from a given log using the N_gram Jaccard distance measures, saves the generated figure in out folder
     '''
 
-    fig, ax = plt.subplots(4, 2, figsize=(15, 15))
+    fig, ax = plt.subplots(4, 2, figsize=figsize)
     fig.suptitle(figure_title)
 
     ax[0, 0].set_title("Simple Jaccard N_gram length = 1")
@@ -83,12 +86,12 @@ def show_n_gram_dendrograms_for_event_log(log, figure_title, output_file_name, a
     plt.show()
     fig.savefig("../out/" + output_file_name)
 
-def show_role_comparison_dendrograms_for_event_log(log, activities_column, roles_column, figure_title, output_file_name):
+def show_role_comparison_dendrograms_for_event_log(log, activities_column, roles_column, figure_title, output_file_name, figsize=(15,5)):
     '''
     Prints the dendrograms from a given log using the role comparison distance measures, saves the generated figure in out folder
     '''
 
-    fig, ax = plt.subplots(1, 2, figsize=(15, 5))
+    fig, ax = plt.subplots(1, 2, figsize=figsize)
     fig.suptitle(figure_title)
 
     ax[0].set_title("Simple Role Comparison")
@@ -102,12 +105,12 @@ def show_role_comparison_dendrograms_for_event_log(log, activities_column, roles
     plt.show()
     fig.savefig("../out/" + output_file_name)
 
-def show_label_similarity_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name"):
+def show_label_similarity_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name", figsize=(10,5)):
     '''
     Prints the dendrograms from a given log using the label similarity distance measures, saves the generated figure in out folder
     '''
 
-    fig, ax = plt.subplots(1, figsize=(10, 5))
+    fig, ax = plt.subplots(1, figsize=figsize)
     fig.suptitle(figure_title)
 
     role_comp = Label_Similarity.Label_Similarity(log)
