@@ -1,0 +1,180 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 750px;
+                 background-color: black;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+             #config {
+                 float: left;
+                 width: 400px;
+                 height: 600px;
+             }
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+            <div id="config"></div>
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08}", "label": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08, Resource12} ::: {admin1, Resource10, Resource19} ::: {Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08} ::: {admin1, Resource19, Resource01, Resource11, Resource10, Resource07}", "value": 4}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08, Resource12}", "label": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08, Resource12}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08, Resource12} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {Resource12_dummy} ::: {Resource01, Resource12, Resource21, Resource02, Resource05, Resource17, Resource04, Resource09, Resource19, Resource07, admin1, Resource14, Resource15, Resource18, Resource08, Resource11, Resource10} ::: {Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08, Resource12} ::: {admin1, Resource10, Resource19} ::: {Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08}", "value": 5}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{admin1, Resource19, Resource01, Resource11, Resource10, Resource07}", "label": "{admin1, Resource19, Resource01, Resource11, Resource10, Resource07}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{admin1, Resource19, Resource01, Resource11, Resource10, Resource07} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {admin1, Resource19, Resource01, Resource11, Resource10, Resource07} ::: {Resource07, Resource01, Resource11} ::: {admin1, Resource10, Resource19} ::: {Resource01, Resource12, Resource21, Resource02, Resource05, Resource17, Resource04, Resource09, Resource19, Resource07, admin1, Resource14, Resource15, Resource18, Resource08, Resource11, Resource10} ::: {Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08}", "value": 5}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{admin1, Resource10, Resource19}", "label": "{admin1, Resource10, Resource19}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{admin1, Resource10, Resource19} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {admin1, Resource10, Resource19} ::: {admin1, Resource19, Resource01, Resource11, Resource10, Resource07}", "value": 2}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource12_dummy}", "label": "{Resource12_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource12_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08, Resource12} ::: {Resource12_dummy}", "value": 2}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource01, Resource12, Resource21, Resource02, Resource05, Resource17, Resource04, Resource09, Resource19, Resource07, admin1, Resource14, Resource15, Resource18, Resource08, Resource11, Resource10}", "label": "{Resource01, Resource12, Resource21, Resource02, Resource05, Resource17, Resource04, Resource09, Resource19, Resource07, admin1, Resource14, Resource15, Resource18, Resource08, Resource11, Resource10}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource01, Resource12, Resource21, Resource02, Resource05, Resource17, Resource04, Resource09, Resource19, Resource07, admin1, Resource14, Resource15, Resource18, Resource08, Resource11, Resource10} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {Resource25, Resource26, Resource34, Resource13, Resource43, Resource39, Resource17, Resource09, Resource20, Resource19, Resource38, Resource07, Resource35, Resource29, Resource03, Resource18, Resource08, Resource11, Resource10, Resource12, Resource01, Resource27, Resource21, Resource06, Resource02, admin3, Resource05, Resource32, Resource04, admin1, Resource14, Resource24, Resource15, admin2, Resource33, Resource23, Resource16, Resource22}", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource07, Resource01, Resource11}", "label": "{Resource07, Resource01, Resource11}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource07, Resource01, Resource11} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {Resource07, Resource01, Resource11} ::: {admin1, Resource10, Resource19} ::: {admin1, Resource19, Resource01, Resource11, Resource10, Resource07}", "value": 3}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "*", "label": "*", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e* Output Links: \u003c/h3\u003e\u003cbr\u003e::: {Resource01, Resource12, Resource26, Resource21, Resource06, Resource34, Resource02, Resource05, Resource13, Resource17, Resource04, Resource09, Resource10, Resource19, Resource07, admin1, Resource14, Resource03, Resource24, Resource15, Resource18, Resource08, Resource11, Resource23, Resource22} ::: *", "value": 2}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource01, Resource12, Resource26, Resource21, Resource06, Resource34, Resource02, Resource05, Resource13, Resource17, Resource04, Resource09, Resource10, Resource19, Resource07, admin1, Resource14, Resource03, Resource24, Resource15, Resource18, Resource08, Resource11, Resource23, Resource22}", "label": "{Resource01, Resource12, Resource26, Resource21, Resource06, Resource34, Resource02, Resource05, Resource13, Resource17, Resource04, Resource09, Resource10, Resource19, Resource07, admin1, Resource14, Resource03, Resource24, Resource15, Resource18, Resource08, Resource11, Resource23, Resource22}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource01, Resource12, Resource26, Resource21, Resource06, Resource34, Resource02, Resource05, Resource13, Resource17, Resource04, Resource09, Resource10, Resource19, Resource07, admin1, Resource14, Resource03, Resource24, Resource15, Resource18, Resource08, Resource11, Resource23, Resource22} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {admin1, Resource19, Resource01, Resource11, Resource10, Resource07} ::: {Resource01, Resource12, Resource26, Resource21, Resource06, Resource34, Resource02, Resource05, Resource13, Resource17, Resource04, Resource09, Resource10, Resource19, Resource07, admin1, Resource14, Resource03, Resource24, Resource15, Resource18, Resource08, Resource11, Resource23, Resource22} ::: admin2 ::: {Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08, Resource12} ::: {Resource03_dummy}", "value": 5}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource03_dummy}", "label": "{Resource03_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource03_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {Resource25, Resource26, Resource34, Resource13, Resource43, Resource39, Resource17, Resource09, Resource20, Resource19, Resource38, Resource07, Resource35, Resource29, Resource03, Resource18, Resource08, Resource11, Resource10, Resource12, Resource01, Resource27, Resource21, Resource06, Resource02, admin3, Resource05, Resource32, Resource04, admin1, Resource14, Resource24, Resource15, admin2, Resource33, Resource23, Resource16, Resource22} ::: {Resource03_dummy}", "value": 2}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource25, Resource26, Resource34, Resource13, Resource43, Resource39, Resource17, Resource09, Resource20, Resource19, Resource38, Resource07, Resource35, Resource29, Resource03, Resource18, Resource08, Resource11, Resource10, Resource12, Resource01, Resource27, Resource21, Resource06, Resource02, admin3, Resource05, Resource32, Resource04, admin1, Resource14, Resource24, Resource15, admin2, Resource33, Resource23, Resource16, Resource22}", "label": "{Resource25, Resource26, Resource34, Resource13, Resource43, Resource39, Resource17, Resource09, Resource20, Resource19, Resource38, Resource07, Resource35, Resource29, Resource03, Resource18, Resource08, Resource11, Resource10, Resource12, Resource01, Resource27, Resource21, Resource06, Resource02, admin3, Resource05, Resource32, Resource04, admin1, Resource14, Resource24, Resource15, admin2, Resource33, Resource23, Resource16, Resource22}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource25, Resource26, Resource34, Resource13, Resource43, Resource39, Resource17, Resource09, Resource20, Resource19, Resource38, Resource07, Resource35, Resource29, Resource03, Resource18, Resource08, Resource11, Resource10, Resource12, Resource01, Resource27, Resource21, Resource06, Resource02, admin3, Resource05, Resource32, Resource04, admin1, Resource14, Resource24, Resource15, admin2, Resource33, Resource23, Resource16, Resource22} Output Links: \u003c/h3\u003e"}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource06_dummy}", "label": "{Resource06_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource06_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {Resource06_dummy}", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource16_dummy}", "label": "{Resource16_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource16_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {Resource16_dummy}", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource13_dummy}", "label": "{Resource13_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource13_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {Resource13_dummy}", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource01, Resource12, Resource21, Resource06, Resource02, Resource05, Resource17, Resource04, Resource09, Resource19, Resource07, admin1, Resource14, Resource24, Resource15, Resource18, Resource08, Resource11, Resource10}", "label": "{Resource01, Resource12, Resource21, Resource06, Resource02, Resource05, Resource17, Resource04, Resource09, Resource19, Resource07, admin1, Resource14, Resource24, Resource15, Resource18, Resource08, Resource11, Resource10}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource01, Resource12, Resource21, Resource06, Resource02, Resource05, Resource17, Resource04, Resource09, Resource19, Resource07, admin1, Resource14, Resource24, Resource15, Resource18, Resource08, Resource11, Resource10} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {Resource01, Resource12, Resource21, Resource06, Resource02, Resource05, Resource17, Resource04, Resource09, Resource19, Resource07, admin1, Resource14, Resource24, Resource15, Resource18, Resource08, Resource11, Resource10} ::: {Resource25, Resource26, Resource34, Resource13, Resource43, Resource39, Resource17, Resource09, Resource20, Resource19, Resource38, Resource07, Resource35, Resource29, Resource03, Resource18, Resource08, Resource11, Resource10, Resource12, Resource01, Resource27, Resource21, Resource06, Resource02, admin3, Resource05, Resource32, Resource04, Resource30, admin1, Resource14, Resource24, Resource15, admin2, Resource33, Resource23, Resource16, Resource22}", "value": 2}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource25, Resource26, Resource34, Resource13, Resource43, Resource39, Resource17, Resource09, Resource20, Resource19, Resource38, Resource07, Resource35, Resource29, Resource03, Resource18, Resource08, Resource11, Resource10, Resource12, Resource01, Resource27, Resource21, Resource06, Resource02, admin3, Resource05, Resource32, Resource04, Resource30, admin1, Resource14, Resource24, Resource15, admin2, Resource33, Resource23, Resource16, Resource22}", "label": "{Resource25, Resource26, Resource34, Resource13, Resource43, Resource39, Resource17, Resource09, Resource20, Resource19, Resource38, Resource07, Resource35, Resource29, Resource03, Resource18, Resource08, Resource11, Resource10, Resource12, Resource01, Resource27, Resource21, Resource06, Resource02, admin3, Resource05, Resource32, Resource04, Resource30, admin1, Resource14, Resource24, Resource15, admin2, Resource33, Resource23, Resource16, Resource22}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource25, Resource26, Resource34, Resource13, Resource43, Resource39, Resource17, Resource09, Resource20, Resource19, Resource38, Resource07, Resource35, Resource29, Resource03, Resource18, Resource08, Resource11, Resource10, Resource12, Resource01, Resource27, Resource21, Resource06, Resource02, admin3, Resource05, Resource32, Resource04, Resource30, admin1, Resource14, Resource24, Resource15, admin2, Resource33, Resource23, Resource16, Resource22} Output Links: \u003c/h3\u003e\u003cbr\u003e::: * ::: {Resource25, Resource26, Resource34, Resource13, Resource43, Resource39, Resource17, Resource09, Resource20, Resource19, Resource38, Resource07, Resource35, Resource29, Resource03, Resource18, Resource08, Resource11, Resource10, Resource12, Resource01, Resource27, Resource21, Resource06, Resource02, admin3, Resource05, Resource32, Resource04, Resource30, admin1, Resource14, Resource24, Resource15, admin2, Resource33, Resource23, Resource16, Resource22}", "value": 2}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource23, Resource22}", "label": "{Resource23, Resource22}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource23, Resource22} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {Resource23, Resource22} ::: {Resource26, Resource23, Resource22}", "value": 2}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource26, Resource23, Resource22}", "label": "{Resource26, Resource23, Resource22}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource26, Resource23, Resource22} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {Resource23, Resource22}", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "admin2", "label": "admin2", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003eadmin2 Output Links: \u003c/h3\u003e"}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource20_dummy}", "label": "{Resource20_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource20_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {Resource20_dummy}", "value": 1}, {"color": {"highlight": {"background": "#41e9df", "border": "#3de975"}}, "font": {"color": "#3de975"}, "id": "{Resource27_dummy}", "label": "{Resource27_dummy}", "labelHighlightBold": true, "shape": "dot", "title": "\u003ch3\u003e{Resource27_dummy} Output Links: \u003c/h3\u003e\u003cbr\u003e::: {Resource07, Resource01, Resource11}", "value": 1}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08}", "title": 0.13276568905707978, "to": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08}", "value": 0.13276568905707978}, {"arrows": "to", "from": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08}", "title": 0.10990223904131188, "to": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08, Resource12}", "value": 0.10990223904131188}, {"arrows": "to", "from": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08}", "title": 0.01151056449069694, "to": "{admin1, Resource19, Resource01, Resource11, Resource10, Resource07}", "value": 0.01151056449069694}, {"arrows": "to", "from": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08}", "title": 0.003784295175023652, "to": "{admin1, Resource10, Resource19}", "value": 0.003784295175023652}, {"arrows": "to", "from": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08, Resource12}", "title": 0.051561021759697255, "to": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08}", "value": 0.051561021759697255}, {"arrows": "to", "from": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08, Resource12}", "title": 0.008987701040681173, "to": "{admin1, Resource10, Resource19}", "value": 0.008987701040681173}, {"arrows": "to", "from": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08, Resource12}", "title": 0.003784295175023652, "to": "{Resource12_dummy}", "value": 0.003784295175023652}, {"arrows": "to", "from": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08, Resource12}", "title": 0.005676442762535478, "to": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08, Resource12}", "value": 0.005676442762535478}, {"arrows": "to", "from": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08, Resource12}", "title": 0.002838221381267739, "to": "{Resource01, Resource12, Resource21, Resource02, Resource05, Resource17, Resource04, Resource09, Resource19, Resource07, admin1, Resource14, Resource15, Resource18, Resource08, Resource11, Resource10}", "value": 0.002838221381267739}, {"arrows": "to", "from": "{Resource07, Resource01, Resource11}", "title": 0.08404288867865027, "to": "{Resource07, Resource01, Resource11}", "value": 0.08404288867865027}, {"arrows": "to", "from": "{Resource07, Resource01, Resource11}", "title": 0.08609271523178808, "to": "{admin1, Resource19, Resource01, Resource11, Resource10, Resource07}", "value": 0.08609271523178808}, {"arrows": "to", "from": "{Resource07, Resource01, Resource11}", "title": 0.0033112582781456954, "to": "{admin1, Resource10, Resource19}", "value": 0.0033112582781456954}, {"arrows": "to", "from": "{admin1, Resource19, Resource01, Resource11, Resource10, Resource07}", "title": 0.042888678650268054, "to": "{Resource07, Resource01, Resource11}", "value": 0.042888678650268054}, {"arrows": "to", "from": "{admin1, Resource19, Resource01, Resource11, Resource10, Resource07}", "title": 0.00772626931567329, "to": "{admin1, Resource10, Resource19}", "value": 0.00772626931567329}, {"arrows": "to", "from": "{admin1, Resource19, Resource01, Resource11, Resource10, Resource07}", "title": 0.005361084831283507, "to": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08}", "value": 0.005361084831283507}, {"arrows": "to", "from": "{admin1, Resource19, Resource01, Resource11, Resource10, Resource07}", "title": 0.00315357931251971, "to": "{admin1, Resource19, Resource01, Resource11, Resource10, Resource07}", "value": 0.00315357931251971}, {"arrows": "to", "from": "{admin1, Resource19, Resource01, Resource11, Resource10, Resource07}", "title": 0.001576789656259855, "to": "{Resource01, Resource12, Resource21, Resource02, Resource05, Resource17, Resource04, Resource09, Resource19, Resource07, admin1, Resource14, Resource15, Resource18, Resource08, Resource11, Resource10}", "value": 0.001576789656259855}, {"arrows": "to", "from": "*", "title": 0.1609902239041312, "to": "*", "value": 0.1609902239041312}, {"arrows": "to", "from": "*", "title": 0.005991800693787449, "to": "{Resource01, Resource12, Resource26, Resource21, Resource06, Resource34, Resource02, Resource05, Resource13, Resource17, Resource04, Resource09, Resource10, Resource19, Resource07, admin1, Resource14, Resource03, Resource24, Resource15, Resource18, Resource08, Resource11, Resource23, Resource22}", "value": 0.005991800693787449}, {"arrows": "to", "from": "{Resource03_dummy}", "title": 0.05912961210974456, "to": "{Resource03_dummy}", "value": 0.05912961210974456}, {"arrows": "to", "from": "{Resource03_dummy}", "title": 0.001576789656259855, "to": "{Resource25, Resource26, Resource34, Resource13, Resource43, Resource39, Resource17, Resource09, Resource20, Resource19, Resource38, Resource07, Resource35, Resource29, Resource03, Resource18, Resource08, Resource11, Resource10, Resource12, Resource01, Resource27, Resource21, Resource06, Resource02, admin3, Resource05, Resource32, Resource04, admin1, Resource14, Resource24, Resource15, admin2, Resource33, Resource23, Resource16, Resource22}", "value": 0.001576789656259855}, {"arrows": "to", "from": "{admin1, Resource10, Resource19}", "title": 0.02554399243140965, "to": "{admin1, Resource19, Resource01, Resource11, Resource10, Resource07}", "value": 0.02554399243140965}, {"arrows": "to", "from": "{admin1, Resource10, Resource19}", "title": 0.006780195521917377, "to": "{admin1, Resource10, Resource19}", "value": 0.006780195521917377}, {"arrows": "to", "from": "{Resource06_dummy}", "title": 0.04178492589088616, "to": "{Resource06_dummy}", "value": 0.04178492589088616}, {"arrows": "to", "from": "{Resource16_dummy}", "title": 0.02759381898454746, "to": "{Resource16_dummy}", "value": 0.02759381898454746}, {"arrows": "to", "from": "{Resource13_dummy}", "title": 0.02522863450015768, "to": "{Resource13_dummy}", "value": 0.02522863450015768}, {"arrows": "to", "from": "{Resource12_dummy}", "title": 0.007568590350047304, "to": "{Resource12_dummy}", "value": 0.007568590350047304}, {"arrows": "to", "from": "{Resource12_dummy}", "title": 0.007568590350047304, "to": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08, Resource12}", "value": 0.007568590350047304}, {"arrows": "to", "from": "{Resource01, Resource12, Resource21, Resource06, Resource02, Resource05, Resource17, Resource04, Resource09, Resource19, Resource07, admin1, Resource14, Resource24, Resource15, Resource18, Resource08, Resource11, Resource10}", "title": 0.008987701040681173, "to": "{Resource01, Resource12, Resource21, Resource06, Resource02, Resource05, Resource17, Resource04, Resource09, Resource19, Resource07, admin1, Resource14, Resource24, Resource15, Resource18, Resource08, Resource11, Resource10}", "value": 0.008987701040681173}, {"arrows": "to", "from": "{Resource01, Resource12, Resource21, Resource06, Resource02, Resource05, Resource17, Resource04, Resource09, Resource19, Resource07, admin1, Resource14, Resource24, Resource15, Resource18, Resource08, Resource11, Resource10}", "title": 0.0029959003468937244, "to": "{Resource25, Resource26, Resource34, Resource13, Resource43, Resource39, Resource17, Resource09, Resource20, Resource19, Resource38, Resource07, Resource35, Resource29, Resource03, Resource18, Resource08, Resource11, Resource10, Resource12, Resource01, Resource27, Resource21, Resource06, Resource02, admin3, Resource05, Resource32, Resource04, Resource30, admin1, Resource14, Resource24, Resource15, admin2, Resource33, Resource23, Resource16, Resource22}", "value": 0.0029959003468937244}, {"arrows": "to", "from": "{Resource25, Resource26, Resource34, Resource13, Resource43, Resource39, Resource17, Resource09, Resource20, Resource19, Resource38, Resource07, Resource35, Resource29, Resource03, Resource18, Resource08, Resource11, Resource10, Resource12, Resource01, Resource27, Resource21, Resource06, Resource02, admin3, Resource05, Resource32, Resource04, Resource30, admin1, Resource14, Resource24, Resource15, admin2, Resource33, Resource23, Resource16, Resource22}", "title": 0.0029959003468937244, "to": "{Resource25, Resource26, Resource34, Resource13, Resource43, Resource39, Resource17, Resource09, Resource20, Resource19, Resource38, Resource07, Resource35, Resource29, Resource03, Resource18, Resource08, Resource11, Resource10, Resource12, Resource01, Resource27, Resource21, Resource06, Resource02, admin3, Resource05, Resource32, Resource04, Resource30, admin1, Resource14, Resource24, Resource15, admin2, Resource33, Resource23, Resource16, Resource22}", "value": 0.0029959003468937244}, {"arrows": "to", "from": "{Resource25, Resource26, Resource34, Resource13, Resource43, Resource39, Resource17, Resource09, Resource20, Resource19, Resource38, Resource07, Resource35, Resource29, Resource03, Resource18, Resource08, Resource11, Resource10, Resource12, Resource01, Resource27, Resource21, Resource06, Resource02, admin3, Resource05, Resource32, Resource04, Resource30, admin1, Resource14, Resource24, Resource15, admin2, Resource33, Resource23, Resource16, Resource22}", "title": 0.0029959003468937244, "to": "*", "value": 0.0029959003468937244}, {"arrows": "to", "from": "{Resource23, Resource22}", "title": 0.005676442762535478, "to": "{Resource23, Resource22}", "value": 0.005676442762535478}, {"arrows": "to", "from": "{Resource23, Resource22}", "title": 0.005676442762535478, "to": "{Resource26, Resource23, Resource22}", "value": 0.005676442762535478}, {"arrows": "to", "from": "{Resource26, Resource23, Resource22}", "title": 0.002838221381267739, "to": "{Resource23, Resource22}", "value": 0.002838221381267739}, {"arrows": "to", "from": "{Resource01, Resource12, Resource26, Resource21, Resource06, Resource34, Resource02, Resource05, Resource13, Resource17, Resource04, Resource09, Resource10, Resource19, Resource07, admin1, Resource14, Resource03, Resource24, Resource15, Resource18, Resource08, Resource11, Resource23, Resource22}", "title": 0.002838221381267739, "to": "{Resource14, Resource21, Resource02, Resource05, Resource15, Resource18, Resource04, Resource17, Resource09, Resource08, Resource12}", "value": 0.002838221381267739}, {"arrows": "to", "from": "{Resource01, Resource12, Resource26, Resource21, Resource06, Resource34, Resource02, Resource05, Resource13, Resource17, Resource04, Resource09, Resource10, Resource19, Resource07, admin1, Resource14, Resource03, Resource24, Resource15, Resource18, Resource08, Resource11, Resource23, Resource22}", "title": 0.005203405865657522, "to": "{Resource01, Resource12, Resource26, Resource21, Resource06, Resource34, Resource02, Resource05, Resource13, Resource17, Resource04, Resource09, Resource10, Resource19, Resource07, admin1, Resource14, Resource03, Resource24, Resource15, Resource18, Resource08, Resource11, Resource23, Resource22}", "value": 0.005203405865657522}, {"arrows": "to", "from": "{Resource01, Resource12, Resource26, Resource21, Resource06, Resource34, Resource02, Resource05, Resource13, Resource17, Resource04, Resource09, Resource10, Resource19, Resource07, admin1, Resource14, Resource03, Resource24, Resource15, Resource18, Resource08, Resource11, Resource23, Resource22}", "title": 0.0017344686218858404, "to": "admin2", "value": 0.0017344686218858404}, {"arrows": "to", "from": "{Resource01, Resource12, Resource26, Resource21, Resource06, Resource34, Resource02, Resource05, Resource13, Resource17, Resource04, Resource09, Resource10, Resource19, Resource07, admin1, Resource14, Resource03, Resource24, Resource15, Resource18, Resource08, Resource11, Resource23, Resource22}", "title": 0.001576789656259855, "to": "{admin1, Resource19, Resource01, Resource11, Resource10, Resource07}", "value": 0.001576789656259855}, {"arrows": "to", "from": "{Resource01, Resource12, Resource26, Resource21, Resource06, Resource34, Resource02, Resource05, Resource13, Resource17, Resource04, Resource09, Resource10, Resource19, Resource07, admin1, Resource14, Resource03, Resource24, Resource15, Resource18, Resource08, Resource11, Resource23, Resource22}", "title": 0.001576789656259855, "to": "{Resource03_dummy}", "value": 0.001576789656259855}, {"arrows": "to", "from": "{Resource01, Resource12, Resource21, Resource02, Resource05, Resource17, Resource04, Resource09, Resource19, Resource07, admin1, Resource14, Resource15, Resource18, Resource08, Resource11, Resource10}", "title": 0.004415011037527594, "to": "{Resource25, Resource26, Resource34, Resource13, Resource43, Resource39, Resource17, Resource09, Resource20, Resource19, Resource38, Resource07, Resource35, Resource29, Resource03, Resource18, Resource08, Resource11, Resource10, Resource12, Resource01, Resource27, Resource21, Resource06, Resource02, admin3, Resource05, Resource32, Resource04, admin1, Resource14, Resource24, Resource15, admin2, Resource33, Resource23, Resource16, Resource22}", "value": 0.004415011037527594}, {"arrows": "to", "from": "{Resource20_dummy}", "title": 0.013402712078208767, "to": "{Resource20_dummy}", "value": 0.013402712078208767}, {"arrows": "to", "from": "{Resource27_dummy}", "title": 0.0023651844843897824, "to": "{Resource07, Resource01, Resource11}", "value": 0.0023651844843897824}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": true,
+        "filter": [
+            "nodes",
+            "edges",
+            "physics"
+        ]
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "barnesHut": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.3,
+            "damping": 0.09,
+            "gravitationalConstant": -80000,
+            "springConstant": 0.001,
+            "springLength": 250
+        },
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+                  // if this network requires displaying the configure window,
+                  // put it in its div
+                  options.configure["container"] = document.getElementById("config");
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
