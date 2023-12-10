@@ -42,7 +42,7 @@ class Event_log:
         
         # assign a one letter code to every activity
         # example: "Process Form: A, Approve Form: B, etc."
-        letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz!#$%&'()*+,-./:;?@[\]^_`{|}~"
+        letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
         self.dict_convert = dict(zip(self.activities, letters[:len(self.activities)]))
 
         variants = []
@@ -88,6 +88,23 @@ class Event_log:
 
         dict_convert_reverse = {y: x for x, y in self.dict_convert.items()}
         dict_convert_reverse['-'] = '-'
+
+        # mafft places newlines when the aligned traces are too long, remove these
+        with open(f'out/{self.output_file_prefix}_mafft.csv', newline='') as f:
+            lines = f.readlines()
+            new_lines = []
+            for line in lines:
+                if line.startswith(">"):
+                    new_lines.append("\n" + line)
+                else:
+                    new_lines.append(line.strip('\n'))
+            new_lines.append("\n")
+
+        # place the lines now without unneccessary newlines in the same file
+        with open(f'out/{self.output_file_prefix}_mafft.csv', newline='', mode="r+") as f:
+            f.truncate(0)
+            new_lines[0] = new_lines[0].lstrip()
+            f.writelines(new_lines)
 
         with open(f'out/{self.output_file_prefix}_mafft.csv', newline='') as f:
             reader = csv.reader(f)
