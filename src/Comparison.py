@@ -1,4 +1,4 @@
-import Jaccard, Simrank, Role_Comparison, Label_Similarity
+import Jaccard, Role_Comparison, Label_Similarity
 from scipy.cluster.hierarchy import fcluster
 from sklearn.metrics import rand_score, mutual_info_score, fowlkes_mallows_score
 import matplotlib.pyplot as plt
@@ -46,27 +46,6 @@ def show_split_jaccard_dendrograms_for_event_log(log, figure_title, output_file_
     fig.tight_layout()
     plt.show()
     fig.savefig("out/" + output_file_name, format="svg")
-
-def show_simrank_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name", figsize=(12,5)):
-    '''
-    Prints the dendrograms from a given log using the Simrank distance measures, saves the generated figure in out folder
-    '''
-
-    fig, ax = plt.subplots(1, 2, figsize=figsize)
-    fig.suptitle(figure_title)
-
-    ax[0].set_title("Simple Simrank")
-    ax[1].set_title("Weighted Simrank")
-
-    simple_simrank = Simrank.Simple_Simrank(log)
-    weighted_simrank = Simrank.Weighted_Simrank(log)
-
-    simple_simrank.perform_clustering(ax=ax[0], activity_key=activity_key)
-    weighted_simrank.perform_clustering(ax=ax[1], activity_key=activity_key)
-
-    fig.tight_layout()
-    plt.show()
-    fig.savefig("out/" + output_file_name)
 
 def show_n_gram_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name", figsize=(12,15)):
     '''
@@ -240,21 +219,6 @@ def compare_dendrogram_using_fowlkes_mallows_score(metric1, metric2, metric1_nam
     plt.plot(list(fm_scores.keys()), list(fm_scores.values()))
 
     return fm_scores
-
-def show_tanglegram(metric1, metric2):
-    '''
-    Shows a tanglegram of two used metrics to show which labels have been assigned differently
-    '''
-
-    metric1.perform_clustering(no_plot=True)
-    metric2.perform_clustering(no_plot=True)
-
-    jacc_df = pd.DataFrame(metric1.get_distance_matrix(), columns = metric1.get_activities(), index = metric1.get_activities())
-    simrank_df = pd.DataFrame(metric2.get_distance_matrix(), columns = metric2.get_activities(), index = metric2.get_activities())
-
-    fig = tg.plot(jacc_df, simrank_df, sort=True)
-    fig.set_size_inches(32, 10)
-    plt.show()
 
 def save_and_open_handover_graph_of_log(log, resource_key, filename):
     '''
