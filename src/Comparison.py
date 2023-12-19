@@ -8,31 +8,46 @@ import pm4py
 from pm4py.algo.organizational_mining.sna import algorithm as sna
 import webbrowser
 
-def show_jaccard_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name", figsize=(20, 5)):
+def show_jaccard_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name", figsize=(12, 5)):
     '''
     Prints the dendrograms from a given log using the Jaccard distance measures, saves the generated figure in out folder
     '''
 
-    fig, ax = plt.subplots(1, 3, figsize=figsize)
+    fig, ax = plt.subplots(1, 2, figsize=figsize)
     fig.suptitle(figure_title)
 
     ax[0].set_title("Simple Jaccard")
-    ax[1].set_title("Split simple Jaccard")
-    ax[2].set_title("Weighted Jaccard")
+    ax[1].set_title("Weighted Jaccard")
 
     simple_jaccard = Jaccard.Simple_Jaccard(log)
-    simple_jaccard_split = Jaccard.Simple_Jaccard(log)
     weighted_jaccard = Jaccard.Weighted_Jaccard(log)
 
     simple_jaccard.perform_clustering(ax=ax[0], activity_key=activity_key)
-    simple_jaccard_split.perform_clustering(ax=ax[1], activity_key=activity_key, split_neighbours=True)
-    weighted_jaccard.perform_clustering(ax=ax[2], activity_key=activity_key)
+    weighted_jaccard.perform_clustering(ax=ax[1], activity_key=activity_key)
 
     fig.tight_layout()
     plt.show()
-    fig.savefig("../out/" + output_file_name)
+    fig.savefig("out/" + output_file_name, format="svg")
 
-def show_simrank_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name", figsize=(15,5)):
+def show_split_jaccard_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name", figsize=(6, 5)):
+    '''
+    Prints the dendrograms from a given log using the Jaccard distance measures, saves the generated figure in out folder
+    '''
+
+    fig, ax = plt.subplots(1, figsize=figsize)
+    fig.suptitle(figure_title)
+
+    ax.set_title("Split Jaccard")
+
+    simple_jaccard = Jaccard.Simple_Jaccard(log)
+
+    simple_jaccard.perform_clustering(ax=ax, activity_key=activity_key, split_neighbours=True)
+
+    fig.tight_layout()
+    plt.show()
+    fig.savefig("out/" + output_file_name, format="svg")
+
+def show_simrank_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name", figsize=(12,5)):
     '''
     Prints the dendrograms from a given log using the Simrank distance measures, saves the generated figure in out folder
     '''
@@ -51,24 +66,22 @@ def show_simrank_dendrograms_for_event_log(log, figure_title, output_file_name, 
 
     fig.tight_layout()
     plt.show()
-    fig.savefig("../out/" + output_file_name)
+    fig.savefig("out/" + output_file_name)
 
-def show_n_gram_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name", figsize=(15,15)):
+def show_n_gram_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name", figsize=(12,15)):
     '''
     Prints the dendrograms from a given log using the N_gram Jaccard distance measures, saves the generated figure in out folder
     '''
 
-    fig, ax = plt.subplots(4, 2, figsize=figsize)
+    fig, ax = plt.subplots(3, 2, figsize=figsize)
     fig.suptitle(figure_title)
 
-    ax[0, 0].set_title("Simple Jaccard N_gram length = 1")
-    ax[0, 1].set_title("Weighted Jaccard N_gram length = 1")
-    ax[1, 0].set_title("Simple Jaccard N_gram length = 2")
-    ax[1, 1].set_title("Weighted Jaccard N_gram length = 2")
-    ax[2, 0].set_title("Simple Jaccard N_gram length = 3")
-    ax[2, 1].set_title("Weighted Jaccard N_gram length = 3")
-    ax[3, 0].set_title("Simple Jaccard N_gram length = 4")
-    ax[3, 1].set_title("Weighted Jaccard N_gram length = 4")
+    ax[0, 0].set_title("Simple Jaccard N-gram length = 1")
+    ax[0, 1].set_title("Weighted Jaccard N-gram length = 1")
+    ax[1, 0].set_title("Simple Jaccard N-gram length = 2")
+    ax[1, 1].set_title("Weighted Jaccard N-gram length = 2")
+    ax[2, 0].set_title("Simple Jaccard N-gram length = 3")
+    ax[2, 1].set_title("Weighted Jaccard N-gram length = 3")
 
     simple_n_gram = Jaccard.Jaccard_N_grams(log)
     weighted_n_gram = Jaccard.Weighted_Jaccard_N_grams(log)
@@ -79,14 +92,12 @@ def show_n_gram_dendrograms_for_event_log(log, figure_title, output_file_name, a
     weighted_n_gram.perform_clustering(length=2, ax=ax[1, 1], activity_key=activity_key)
     simple_n_gram.perform_clustering(length=3, ax=ax[2, 0], activity_key=activity_key)
     weighted_n_gram.perform_clustering(length=3, ax=ax[2, 1], activity_key=activity_key)
-    simple_n_gram.perform_clustering(length=4, ax=ax[3, 0], activity_key=activity_key)
-    weighted_n_gram.perform_clustering(length=4, ax=ax[3, 1], activity_key=activity_key)
 
     fig.tight_layout()
     plt.show()
-    fig.savefig("../out/" + output_file_name)
+    fig.savefig("out/" + output_file_name)
 
-def show_role_comparison_dendrograms_for_event_log(log, activities_column, roles_column, figure_title, output_file_name, figsize=(15,5)):
+def show_role_comparison_dendrograms_for_event_log(log, activities_column, roles_column, figure_title, output_file_name, figsize=(12,5)):
     '''
     Prints the dendrograms from a given log using the role comparison distance measures, saves the generated figure in out folder
     '''
@@ -103,9 +114,9 @@ def show_role_comparison_dendrograms_for_event_log(log, activities_column, roles
 
     fig.tight_layout()
     plt.show()
-    fig.savefig("../out/" + output_file_name)
+    fig.savefig("out/" + output_file_name)
 
-def show_label_similarity_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name", figsize=(10,5)):
+def show_label_similarity_dendrograms_for_event_log(log, figure_title, output_file_name, activity_key="concept:name", figsize=(6,5)):
     '''
     Prints the dendrograms from a given log using the label similarity distance measures, saves the generated figure in out folder
     '''
@@ -118,7 +129,7 @@ def show_label_similarity_dendrograms_for_event_log(log, figure_title, output_fi
 
     fig.tight_layout()
     plt.show()
-    fig.savefig("../out/" + output_file_name)
+    fig.savefig("out/" + output_file_name)
 
 def compare_dendrogram_using_rand_score(metric1, metric2):
     '''
@@ -224,8 +235,8 @@ def compare_dendrogram_using_fowlkes_mallows_score(metric1, metric2, metric1_nam
     # plot data
     plt.figure()
     plt.title(f"Fowlkes-Mallows scores between {metric1_name} and {metric2_name}")
-    plt.xlabel("Number of clusters")
-    plt.ylabel("Fowlkes-Mallows score")
+    plt.xlabel("Number of clusters k")
+    plt.ylabel("Fowlkes-Mallows score B_k")
     plt.plot(list(fm_scores.keys()), list(fm_scores.values()))
 
     return fm_scores
