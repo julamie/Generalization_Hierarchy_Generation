@@ -26,4 +26,4 @@ Newer versions of Pandas sometimes throw errors when reading in newly created ev
   - **src/ARXAnonymizeAttribute.java, arx-3.9.1-gtk-64.jar**: The ARX Anonymization Tool. This was part of the PMDG Framework and performs the anonymization of the event log  
 
 # Who do I contact?
-If you wish to contact me for any questions, you can use the following address: j.laabs01jl@gmail.com
+If you wish to contact me for any questions, you can use the following address: j.laabs01jl[at]gmail.com
